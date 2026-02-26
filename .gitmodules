@@ -1,3 +1,0 @@
-[submodule "src/submodules/autobahn-test"]
-	path = src/submodules/autobahn-test
-	url = https://github.com/crossbario/autobahn-testsuite
