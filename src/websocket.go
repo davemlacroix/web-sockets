@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 )
 
 func main() {
@@ -10,5 +11,9 @@ func main() {
 	//ws://localhost:9001/getCaseCount
 
 	c := NewClient("127.0.0.1:9001")
-	c.Connect()
+	err := c.Connect()
+	if err != nil {
+		fmt.Println("error with initial connection")
+		log.Fatal(err)
+	}
 }

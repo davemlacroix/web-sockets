@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 )
@@ -28,16 +27,14 @@ func (c *WSClient) Connect() error {
 	conn, err := net.Dial("tcp", "127.0.0.1:9001")
 
 	if err != nil {
-		fmt.Println(err)
-		fmt.Println("error with initial connection")
-		log.Fatal(err)
+		return err
 	}
 	c.conn = conn
 	defer conn.Close()
 
 	req, err := http.NewRequest("GET", "http://"+c.addr+"/getCaseCount", nil)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	req.Header.Add("Upgrade", "websocket")
@@ -50,13 +47,13 @@ func (c *WSClient) Connect() error {
 
 	err = req.Write(c.conn)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	reader := bufio.NewReader(c.conn)
 	resp, err := http.ReadResponse(reader, req)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	defer resp.Body.Close()
 
