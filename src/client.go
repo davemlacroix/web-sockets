@@ -16,8 +16,6 @@ type WSClient struct {
 
 type Client interface {
 	Connect() error
-	Send(message []byte) error
-	Close() error
 }
 
 func NewClient(addr string) *WSClient {
