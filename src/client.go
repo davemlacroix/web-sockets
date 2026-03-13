@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-type TCPClient struct {
+type WSClient struct {
 	addr string
 	conn net.Conn
 }
@@ -20,13 +20,13 @@ type Client interface {
 	Close() error
 }
 
-func NewClient(addr string) *TCPClient {
-	return &TCPClient{
+func NewClient(addr string) *WSClient {
+	return &WSClient{
 		addr: addr,
 	}
 }
 
-func (c *TCPClient) Connect() error {
+func (c *WSClient) Connect() error {
 	conn, err := net.Dial("tcp", "127.0.0.1:9001")
 	if err != nil {
 		fmt.Println(err)
