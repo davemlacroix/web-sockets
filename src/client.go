@@ -15,6 +15,7 @@ type WSClient struct {
 
 type Client interface {
 	Connect() error
+	Close()
 }
 
 func NewClient(addr string) *WSClient {
@@ -30,7 +31,6 @@ func (c *WSClient) Connect() error {
 		return err
 	}
 	c.conn = conn
-	defer conn.Close()
 
 	req, err := http.NewRequest("GET", "http://"+c.addr+"/getCaseCount", nil)
 	if err != nil {
@@ -60,4 +60,8 @@ func (c *WSClient) Connect() error {
 	buf := make([]byte, 1024)
 	io.ReadFull(reader, buf)
 	fmt.Println(buf)
+}
+
+func (c *WSClient) Close() error {
+	defer c.conn.Close()
 }

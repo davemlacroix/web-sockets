@@ -16,4 +16,6 @@ func main() {
 		fmt.Println("error with initial connection")
 		log.Fatal(err)
 	}
+
+	defer c.Close()
 }
