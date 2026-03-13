@@ -10,7 +10,7 @@ func main() {
 	//get test cases count by connecting to:
 	//ws://localhost:9001/getCaseCount
 
-	c := NewClient("127.0.0.1:9001")
+	c := NewWSClient("127.0.0.1:9001")
 	err := c.Connect()
 	if err != nil {
 		fmt.Println("error with initial connection")

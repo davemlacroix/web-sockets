@@ -18,7 +18,7 @@ type Client interface {
 	Close()
 }
 
-func NewClient(addr string) *WSClient {
+func NewWSClient(addr string) *WSClient {
 	return &WSClient{
 		addr: addr,
 	}
