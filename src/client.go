@@ -26,14 +26,16 @@ func NewClient(addr string) *WSClient {
 
 func (c *WSClient) Connect() error {
 	conn, err := net.Dial("tcp", "127.0.0.1:9001")
+
 	if err != nil {
 		fmt.Println(err)
 		fmt.Println("error with initial connection")
 		log.Fatal(err)
 	}
+	c.conn = conn
 	defer conn.Close()
 
-	req, err := http.NewRequest("GET", "http://127.0.0.1:9001/getCaseCount", nil)
+	req, err := http.NewRequest("GET", "http://"+c.addr+"/getCaseCount", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,12 +48,12 @@ func (c *WSClient) Connect() error {
 	req.Header.Add("Sec-WebSocket-Protocol", "chat, superchat")
 	req.Header.Add("Sec-WebSocket-Version", "13")
 
-	err = req.Write(conn)
+	err = req.Write(c.conn)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	reader := bufio.NewReader(conn)
+	reader := bufio.NewReader(c.conn)
 	resp, err := http.ReadResponse(reader, req)
 	if err != nil {
 		log.Fatal(err)
