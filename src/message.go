@@ -13,24 +13,67 @@ type Message interface {
 }
 
 type WSMessage struct {
-	reader *bufio.Reader
-	frame  *WSFrame
+	reader           *bufio.Reader
+	frame            *WSFrame
+	payloadRemaining int64
 }
 
 func (m *WSMessage) Type() Opcode {
 	return m.frame.opcode
 }
 
+func (m *WSMessage) Read(p []byte) (n int, err error) {
+	// this will need to be changed to work for multiple frames
+	// in a single message
+	if m.frame == nil {
+		return 0, errors.New("no frame available")
+	}
+
+	if m.payloadRemaining == 0 {
+		return 0, io.EOF
+	}
+
+	readLen := len(p)
+	if int64(readLen) > m.payloadRemaining {
+		readLen = int(m.payloadRemaining)
+	}
+
+	n, err = io.ReadFull(m.frame.reader, p[:readLen])
+	if err != nil {
+		return n, err
+	}
+
+	m.payloadRemaining -= int64(n)
+	if m.payloadRemaining == 0 {
+		return n, io.EOF
+	}
+
+	return n, nil
+}
+
 func (m *WSMessage) ReadText() (string, error) {
 	if m.frame.opcode != Text {
 		return "", errors.New("invalid frame type")
 	}
-	buf := make([]byte, m.frame.length)
-	_, err := io.ReadFull(m.frame.reader, buf)
-	if err != nil {
-		return "", err
+
+	buf := make([]byte, 4096)
+	text := ""
+	for {
+		n, err := m.Read(buf)
+
+		if n > 0 {
+			text += string(buf[:n])
+		}
+
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return "", err
+		}
 	}
-	return string(buf), nil
+
+	return text, nil
 }
 
 func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
@@ -46,8 +89,9 @@ func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
 	fmt.Println("End Frame Header -----------------")
 
 	m := &WSMessage{
-		reader: reader,
-		frame:  frame,
+		reader:           reader,
+		frame:            frame,
+		payloadRemaining: frame.length,
 	}
 	return m, nil
 }
