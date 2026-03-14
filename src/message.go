@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"io"
 )
 
@@ -30,4 +31,23 @@ func (m *WSMessage) ReadText() (string, error) {
 		return "", err
 	}
 	return string(buf), nil
+}
+
+func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
+	frame, err := NextWSFrame(reader)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println("Frame Header ---------------------")
+	fmt.Println("final: ", frame.final)
+	fmt.Println("opcode: ", frame.opcode)
+	fmt.Println("masked: ", frame.masked)
+	fmt.Println("length: ", frame.length)
+	fmt.Println("End Frame Header -----------------")
+
+	m := &WSMessage{
+		reader: reader,
+		frame:  frame,
+	}
+	return m, nil
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"net"
 	"net/http"
 )
@@ -15,7 +14,7 @@ type WSClient struct {
 
 type Client interface {
 	Connect() error
-	ReadMessage() (*Message, error)
+	NextMessage() (*Message, error)
 	Close()
 }
 
@@ -61,22 +60,13 @@ func (c *WSClient) Connect() error {
 	return nil
 }
 
-func (c *WSClient) ReadMessage() (*WSMessage, error) {
-	frame, err := NextWSFrame(c.reader)
+func (c *WSClient) NextMessage() (*WSMessage, error) {
+	message, err := NextWSMessage(c.reader)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Frame Header ---------------------")
-	fmt.Println("final: ", frame.final)
-	fmt.Println("opcode: ", frame.opcode)
-	fmt.Println("masked: ", frame.masked)
-	fmt.Println("length: ", frame.length)
-	fmt.Println("End Frame Header -----------------")
 
-	// buf := make([]byte, 1024)
-	// io.ReadFull(c.reader, buf)
-	// fmt.Println(buf)
-	return frame, nil
+	return message, nil
 }
 
 func (c *WSClient) Close() error {

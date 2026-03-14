@@ -18,7 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	message, err := c.ReadMessage()
+	message, err := c.NextMessage()
 	if err != nil {
 		fmt.Println("error reading frame")
 		log.Fatal(err)
@@ -32,7 +32,7 @@ func main() {
 	fmt.Println("test count: ", count)
 
 	//need to handle close message opcode
-	message, err = c.ReadMessage()
+	message, err = c.NextMessage()
 
 	//loop through all test cases and initiate a connection
 }
