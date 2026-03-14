@@ -17,5 +17,6 @@ func main() {
 		log.Fatal(err)
 	}
 
+	_, err = c.ReadFrame()
 	defer c.Close()
 }

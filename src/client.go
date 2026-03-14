@@ -9,12 +9,14 @@ import (
 )
 
 type WSClient struct {
-	addr string
-	conn net.Conn
+	addr   string
+	conn   net.Conn
+	reader *bufio.Reader
 }
 
 type Client interface {
 	Connect() error
+	ReadFrame() (*Frame, error)
 	Close()
 }
 
@@ -50,14 +52,18 @@ func (c *WSClient) Connect() error {
 		return err
 	}
 
-	reader := bufio.NewReader(c.conn)
-	resp, err := http.ReadResponse(reader, req)
+	c.reader = bufio.NewReader(c.conn)
+	resp, err := http.ReadResponse(c.reader, req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	frame := NewWSFrame(reader)
+	return nil
+}
+
+func (c *WSClient) ReadFrame() (*WSFrame, error) {
+	frame := NewWSFrame(c.reader)
 	frame.ReadHeader()
 
 	fmt.Println("final: ", frame.final)
@@ -66,9 +72,9 @@ func (c *WSClient) Connect() error {
 	fmt.Println("length: ", frame.length)
 
 	buf := make([]byte, 1024)
-	io.ReadFull(reader, buf)
+	io.ReadFull(c.reader, buf)
 	fmt.Println(buf)
-	return nil
+	return frame, nil
 }
 
 func (c *WSClient) Close() error {
