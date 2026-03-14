@@ -57,11 +57,21 @@ func (c *WSClient) Connect() error {
 	}
 	defer resp.Body.Close()
 
+	frame := NewWSFrame(reader)
+	frame.ReadHeader()
+
+	fmt.Println("final: ", frame.final)
+	fmt.Println("opcode: ", frame.opcode)
+	fmt.Println("masked: ", frame.masked)
+	fmt.Println("length: ", frame.length)
+
 	buf := make([]byte, 1024)
 	io.ReadFull(reader, buf)
 	fmt.Println(buf)
+	return nil
 }
 
 func (c *WSClient) Close() error {
 	defer c.conn.Close()
+	return nil
 }
