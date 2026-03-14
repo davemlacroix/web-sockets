@@ -7,21 +7,29 @@ import (
 	"io"
 )
 
+type Opcode int
+
+const (
+	Text   Opcode = 1
+	Binary        = 2
+	Close         = 8
+)
+
 type Frame interface {
-	Type() int
+	Type() Opcode
 	ReadText() (string, error)
 }
 
 type WSFrame struct {
 	reader *bufio.Reader
 	final  bool
-	opcode int
+	opcode Opcode
 	masked bool
 	length int64
 	mask   int32
 }
 
-func (f *WSFrame) Type() int {
+func (f *WSFrame) Type() Opcode {
 	return f.opcode
 }
 
@@ -47,7 +55,7 @@ func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 		return f, err
 	}
 	f.final = (b & 0x80) != 0
-	f.opcode = int(b & 0x0F)
+	f.opcode = Opcode(b & 0x0F)
 
 	b, err = f.reader.ReadByte()
 	if err != nil {

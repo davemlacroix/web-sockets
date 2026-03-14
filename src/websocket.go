@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if frame.Type() != 1 {
+	if frame.Type() != Text {
 		fmt.Println("unexpected frame type")
 		log.Fatal(err)
 	}
