@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 )
@@ -67,15 +66,16 @@ func (c *WSClient) ReadFrame() (*WSFrame, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println("Frame Header ---------------------")
 	fmt.Println("final: ", frame.final)
 	fmt.Println("opcode: ", frame.opcode)
 	fmt.Println("masked: ", frame.masked)
 	fmt.Println("length: ", frame.length)
+	fmt.Println("End Frame Header -----------------")
 
-	buf := make([]byte, 1024)
-	io.ReadFull(c.reader, buf)
-	fmt.Println(buf)
+	// buf := make([]byte, 1024)
+	// io.ReadFull(c.reader, buf)
+	// fmt.Println(buf)
 	return frame, nil
 }
 

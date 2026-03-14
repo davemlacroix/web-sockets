@@ -12,11 +12,24 @@ func main() {
 
 	c := NewWSClient("127.0.0.1:9001")
 	err := c.Connect()
+	defer c.Close()
 	if err != nil {
 		fmt.Println("error with initial connection")
 		log.Fatal(err)
 	}
 
-	_, err = c.ReadFrame()
-	defer c.Close()
+	frame, err := c.ReadFrame()
+	if err != nil {
+		fmt.Println("error reading frame")
+		log.Fatal(err)
+	}
+
+	if frame.Type() != 1 {
+		fmt.Println("unexpected frame type")
+		log.Fatal(err)
+	}
+	count, err := frame.ReadText()
+	fmt.Println("test count: ", count)
+
+	frame, err = c.ReadFrame()
 }
