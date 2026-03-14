@@ -2,9 +2,12 @@ package main
 
 import (
 	"bufio"
+	"crypto/rand"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 )
 
 type Message interface {
@@ -15,7 +18,7 @@ type Message interface {
 type WSMessage struct {
 	reader           *bufio.Reader
 	frame            *WSFrame
-	payloadRemaining int64
+	payloadRemaining uint64
 }
 
 func (m *WSMessage) Type() Opcode {
@@ -34,7 +37,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 	}
 
 	readLen := len(p)
-	if int64(readLen) > m.payloadRemaining {
+	if uint64(readLen) > m.payloadRemaining {
 		readLen = int(m.payloadRemaining)
 	}
 
@@ -43,7 +46,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 		return n, err
 	}
 
-	m.payloadRemaining -= int64(n)
+	m.payloadRemaining -= uint64(n)
 	if m.payloadRemaining == 0 {
 		return n, io.EOF
 	}
@@ -94,4 +97,17 @@ func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
 		payloadRemaining: frame.length,
 	}
 	return m, nil
+}
+
+func SendCloseMessage(conn net.Conn) {
+	frame := NewWSFrame()
+	frame.final = true
+	frame.opcode = Close
+	frame.length = 0
+	frame.masked = true
+	b := make([]byte, 4)
+	rand.Read(b)
+	frame.mask = int32(binary.BigEndian.Uint32(b))
+
+	frame.Write(conn, b)
 }
