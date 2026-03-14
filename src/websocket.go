@@ -18,18 +18,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	frame, err := c.ReadFrame()
+	message, err := c.ReadMessage()
 	if err != nil {
 		fmt.Println("error reading frame")
 		log.Fatal(err)
 	}
 
-	if frame.Type() != Text {
+	if message.Type() != Text {
 		fmt.Println("unexpected frame type")
 		log.Fatal(err)
 	}
-	count, err := frame.ReadText()
+	count, err := message.ReadText()
 	fmt.Println("test count: ", count)
 
-	frame, err = c.ReadFrame()
+	//need to handle close message opcode
+	message, err = c.ReadMessage()
+
+	//loop through all test cases and initiate a connection
 }

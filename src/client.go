@@ -15,7 +15,7 @@ type WSClient struct {
 
 type Client interface {
 	Connect() error
-	ReadFrame() (*Frame, error)
+	ReadMessage() (*Message, error)
 	Close()
 }
 
@@ -61,7 +61,7 @@ func (c *WSClient) Connect() error {
 	return nil
 }
 
-func (c *WSClient) ReadFrame() (*WSFrame, error) {
+func (c *WSClient) ReadMessage() (*WSMessage, error) {
 	frame, err := NextWSFrame(c.reader)
 	if err != nil {
 		return nil, err

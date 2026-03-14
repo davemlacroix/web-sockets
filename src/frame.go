@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"encoding/binary"
-	"errors"
 	"io"
 )
 
@@ -15,11 +14,6 @@ const (
 	Close         = 8
 )
 
-type Frame interface {
-	Type() Opcode
-	ReadText() (string, error)
-}
-
 type WSFrame struct {
 	reader *bufio.Reader
 	final  bool
@@ -27,22 +21,6 @@ type WSFrame struct {
 	masked bool
 	length int64
 	mask   int32
-}
-
-func (f *WSFrame) Type() Opcode {
-	return f.opcode
-}
-
-func (f *WSFrame) ReadText() (string, error) {
-	if f.opcode != 1 {
-		return "", errors.New("invalid frame type")
-	}
-	buf := make([]byte, f.length)
-	_, err := io.ReadFull(f.reader, buf)
-	if err != nil {
-		return "", err
-	}
-	return string(buf), nil
 }
 
 func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
