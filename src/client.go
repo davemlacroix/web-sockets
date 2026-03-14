@@ -63,8 +63,10 @@ func (c *WSClient) Connect() error {
 }
 
 func (c *WSClient) ReadFrame() (*WSFrame, error) {
-	frame := NewWSFrame(c.reader)
-	frame.ReadHeader()
+	frame, err := NextWSFrame(c.reader)
+	if err != nil {
+		return nil, err
+	}
 
 	fmt.Println("final: ", frame.final)
 	fmt.Println("opcode: ", frame.opcode)

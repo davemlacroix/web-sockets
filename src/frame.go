@@ -7,7 +7,6 @@ import (
 )
 
 type Frame interface {
-	ReadHeader()
 }
 
 type WSFrame struct {
@@ -19,23 +18,21 @@ type WSFrame struct {
 	mask   int32
 }
 
-func NewWSFrame(reader *bufio.Reader) *WSFrame {
-	return &WSFrame{
+func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
+	f := &WSFrame{
 		reader: reader,
 	}
-}
 
-func (f *WSFrame) ReadHeader() error {
 	b, err := f.reader.ReadByte()
 	if err != nil {
-		return err
+		return f, err
 	}
 	f.final = (b & 0x80) != 0
 	f.opcode = int(b & 0x0F)
 
 	b, err = f.reader.ReadByte()
 	if err != nil {
-		return err
+		return f, err
 	}
 	f.masked = (b & 0x80) != 0
 
@@ -44,7 +41,7 @@ func (f *WSFrame) ReadHeader() error {
 		lenBuf := make([]byte, 2)
 		_, err := io.ReadFull(f.reader, lenBuf)
 		if err != nil {
-			return err
+			return f, err
 		}
 		f.length = int64(binary.BigEndian.Uint16(lenBuf))
 	}
@@ -52,7 +49,7 @@ func (f *WSFrame) ReadHeader() error {
 		lenBuf := make([]byte, 2)
 		_, err := io.ReadFull(f.reader, lenBuf)
 		if err != nil {
-			return err
+			return f, err
 		}
 		f.length = int64(binary.BigEndian.Uint64(lenBuf))
 	}
@@ -61,10 +58,10 @@ func (f *WSFrame) ReadHeader() error {
 		maskBuf := make([]byte, 4)
 		_, err := io.ReadFull(f.reader, maskBuf)
 		if err != nil {
-			return err
+			return f, err
 		}
 		f.mask = int32(binary.BigEndian.Uint32(maskBuf))
 	}
 
-	return nil
+	return f, nil
 }
