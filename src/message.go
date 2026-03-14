@@ -38,7 +38,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 		readLen = int(m.payloadRemaining)
 	}
 
-	n, err = io.ReadFull(m.frame.reader, p[:readLen])
+	n, err = io.ReadFull(m.reader, p[:readLen])
 	if err != nil {
 		return n, err
 	}
@@ -77,7 +77,7 @@ func (m *WSMessage) ReadText() (string, error) {
 }
 
 func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
-	frame, err := NextWSFrame(reader)
+	frame, err := ReadWSFrame(reader)
 	if err != nil {
 		return nil, err
 	}

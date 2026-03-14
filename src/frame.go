@@ -15,7 +15,6 @@ const (
 )
 
 type WSFrame struct {
-	reader *bufio.Reader
 	final  bool
 	opcode Opcode
 	masked bool
@@ -23,19 +22,20 @@ type WSFrame struct {
 	mask   int32
 }
 
+func NewWSFrame() *WSFrame {
+	return &WSFrame{}
+}
 func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
-	f := &WSFrame{
-		reader: reader,
-	}
+	f := &WSFrame{}
 
-	b, err := f.reader.ReadByte()
+	b, err := reader.ReadByte()
 	if err != nil {
 		return f, err
 	}
 	f.final = (b & 0x80) != 0
 	f.opcode = Opcode(b & 0x0F)
 
-	b, err = f.reader.ReadByte()
+	b, err = reader.ReadByte()
 	if err != nil {
 		return f, err
 	}
@@ -44,7 +44,7 @@ func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 	f.length = int64(b & 0x7F)
 	if f.length == 126 {
 		lenBuf := make([]byte, 2)
-		_, err := io.ReadFull(f.reader, lenBuf)
+		_, err := io.ReadFull(reader, lenBuf)
 		if err != nil {
 			return f, err
 		}
@@ -52,7 +52,7 @@ func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 	}
 	if f.length == 127 {
 		lenBuf := make([]byte, 2)
-		_, err := io.ReadFull(f.reader, lenBuf)
+		_, err := io.ReadFull(reader, lenBuf)
 		if err != nil {
 			return f, err
 		}
@@ -61,7 +61,7 @@ func NextWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 
 	if f.masked {
 		maskBuf := make([]byte, 4)
-		_, err := io.ReadFull(f.reader, maskBuf)
+		_, err := io.ReadFull(reader, maskBuf)
 		if err != nil {
 			return f, err
 		}
