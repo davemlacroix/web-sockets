@@ -2,14 +2,16 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"net"
 	"net/http"
 )
 
 type WSClient struct {
-	addr   string
-	conn   net.Conn
-	reader *bufio.Reader
+	connected bool
+	addr      string
+	conn      net.Conn
+	reader    *bufio.Reader
 }
 
 type Client interface {
@@ -25,13 +27,13 @@ func NewWSClient(addr string) *WSClient {
 }
 
 func (c *WSClient) Connect() error {
+	c.connected = false
 	conn, err := net.Dial("tcp", "127.0.0.1:9001")
 
 	if err != nil {
 		return err
 	}
 	c.conn = conn
-
 	req, err := http.NewRequest("GET", "http://"+c.addr+"/getCaseCount", nil)
 	if err != nil {
 		return err
@@ -56,20 +58,33 @@ func (c *WSClient) Connect() error {
 		return err
 	}
 	defer resp.Body.Close()
-
+	c.connected = true
 	return nil
 }
 
 func (c *WSClient) NextMessage() (*WSMessage, error) {
+	if c.connected == false {
+		return nil, errors.New("connection is not open")
+	}
+
 	message, err := NextWSMessage(c.reader)
 	if err != nil {
 		return nil, err
+	}
+
+	if message.Type() == Close {
+		c.connected = false
+		c.conn.Close()
+		return message, nil
 	}
 
 	return message, nil
 }
 
 func (c *WSClient) Close() error {
+	//a close frame needs to be sent
+	//need to wait for a close frame response
+	c.connected = false
 	defer c.conn.Close()
 	return nil
 }
