@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"io"
 	"net"
 )
@@ -82,12 +81,12 @@ func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("Frame Header ---------------------")
-	fmt.Println("final: ", frame.final)
-	fmt.Println("opcode: ", frame.opcode)
-	fmt.Println("masked: ", frame.masked)
-	fmt.Println("length: ", frame.length)
-	fmt.Println("End Frame Header -----------------")
+	// fmt.Println("Frame Header ---------------------")
+	// fmt.Println("final: ", frame.final)
+	// fmt.Println("opcode: ", frame.opcode)
+	// fmt.Println("masked: ", frame.masked)
+	// fmt.Println("length: ", frame.length)
+	// fmt.Println("End Frame Header -----------------")
 
 	m := &WSMessage{
 		reader:           reader,

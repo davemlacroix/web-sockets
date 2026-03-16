@@ -9,7 +9,7 @@ import (
 
 func main() {
 	fmt.Println("Starting websockets client...")
-
+	agentName := "MyWSClient"
 	conn := NewWSClient("127.0.0.1:9001")
 
 	n, err := GetTestCount(conn)
@@ -20,13 +20,27 @@ func main() {
 
 	fmt.Println("test count: ", n)
 
-	//loop through all test cases and initiate a connection
+	for i := 0; i < n; i++ {
+		path := "/runCase?case=" + strconv.Itoa(i) + "&agent=" + agentName
+		RunTest(conn, path)
+	}
 
-	err = UpdateReports(conn)
+	err = UpdateReports(conn, agentName)
 	if err != nil {
 		fmt.Println("error updating reports")
 		log.Fatal(err)
 	}
+}
+
+func RunTest(conn *WSClient, path string) error {
+	err := conn.Connect(path)
+	defer conn.Close()
+	if err != nil {
+		fmt.Println("error with initial connection")
+		log.Fatal(err)
+	}
+
+	return nil
 }
 
 func GetTestCount(conn *WSClient) (int, error) {
@@ -68,21 +82,12 @@ func GetTestCount(conn *WSClient) (int, error) {
 	return count, nil
 }
 
-func UpdateReports(conn *WSClient) error {
-	err := conn.Connect("/updateReports?agent=MyWSClient")
+func UpdateReports(conn *WSClient, agentName string) error {
+	err := conn.Connect("/updateReports?agent" + agentName)
 	defer conn.Close()
 	if err != nil {
 		fmt.Println("error with initial connection")
 		log.Fatal(err)
-	}
-
-	message, err := conn.NextMessage()
-	if err != nil {
-		return err
-	}
-
-	if message.Type() != Close {
-		return errors.New("expected close message opcode")
 	}
 
 	return nil
