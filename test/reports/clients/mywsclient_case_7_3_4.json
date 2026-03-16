@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a close frame with close code and close reason",
    "droppedByMe": true,
-   "duration": 4,
+   "duration": 1,
    "expectation": "Clean close with normal code.",
    "expected": {
       "OK": []
@@ -41,7 +41,7 @@
       "6": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:01:18.677Z",
+   "started": "2026-03-16T16:28:52.641Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1
@@ -101,7 +101,7 @@
          "RO",
          [
             6,
-            "8880bd1a5119"
+            "8880f3eea19a"
          ]
       ],
       [
@@ -114,7 +114,7 @@
          true,
          0,
          true,
-         "bd1a5119"
+         "f3eea19a"
       ]
    ]
 }

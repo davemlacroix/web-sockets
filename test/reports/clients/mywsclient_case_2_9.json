@@ -1,14 +1,14 @@
 {
    "agent": "MyWSClient",
    "behavior": "FAILED",
-   "behaviorClose": "FAILED",
+   "behaviorClose": "UNCLEAN",
    "case": 25,
-   "closedByMe": false,
+   "closedByMe": true,
    "createStats": true,
    "createWirelog": true,
    "description": "Send unsolicited pong with payload. Send ping with payload. Verify pong for ping is received.",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 2003,
    "expectation": "Nothing in reply to own Pong, but Pong with payload echo'ed in reply to Ping. Clean close with normal code.",
    "expected": {
       "OK": [
@@ -30,7 +30,7 @@
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "2.9",
    "isServer": true,
-   "localCloseCode": 1000,
+   "localCloseCode": null,
    "localCloseReason": null,
    "received": [],
    "remoteCloseCode": null,
@@ -38,15 +38,12 @@
    "reportCompressionRatio": false,
    "reportTime": false,
    "result": "Actual events differ from any expected.",
-   "resultClose": "The connection was failed by the wrong endpoint",
-   "rxFrameStats": {
-      "8": 1
-   },
+   "resultClose": "The spec requires the connection to be failed cleanly here",
+   "rxFrameStats": {},
    "rxOctetStats": {
-      "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:17.993Z",
+   "started": "2026-03-16T16:28:10.659Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1,
@@ -54,14 +51,14 @@
       "10": 1
    },
    "txOctetStats": {
-      "4": 1,
+      "2": 1,
       "14": 1,
       "26": 1,
       "208": 1
    },
-   "wasClean": true,
-   "wasCloseHandshakeTimeout": false,
-   "wasNotCleanReason": null,
+   "wasClean": false,
+   "wasCloseHandshakeTimeout": true,
+   "wasNotCleanReason": "peer did not respond (in time) in closing handshake",
    "wasOpenHandshakeTimeout": false,
    "wasServerConnectionDropTimeout": false,
    "wirelog": [
@@ -129,29 +126,13 @@
          1
       ],
       [
-         "RO",
-         [
-            6,
-            "888092e06ef0"
-         ]
-      ],
-      [
-         "RF",
-         [
-            0,
-            ""
-         ],
-         8,
-         true,
-         0,
-         true,
-         "92e06ef0"
+         "TIE"
       ],
       [
          "TF",
          [
-            2,
-            "0x03e8"
+            0,
+            ""
          ],
          8,
          true,
@@ -164,8 +145,8 @@
       [
          "TO",
          [
-            4,
-            "880203e8"
+            2,
+            "8800"
          ],
          false
       ]

@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send small text message, then send again with <b>RSV = 2</b>, then send Ping.",
    "droppedByMe": true,
-   "duration": 7,
+   "duration": 2,
    "expectation": "Echo for first message is received, but then connection is failed immediately, since RSV must be 0, when no extension defining RSV meaning has been negotiated. The Pong is not received.",
    "expected": {
       "NON-STRICT": [],
@@ -48,7 +48,7 @@
       "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:18.020Z",
+   "started": "2026-03-16T16:28:22.044Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 2,
@@ -156,7 +156,7 @@
          "RO",
          [
             6,
-            "8880254b70f7"
+            "88808f53dc8a"
          ]
       ],
       [
@@ -169,7 +169,7 @@
          true,
          0,
          true,
-         "254b70f7"
+         "8f53dc8a"
       ],
       [
          "TF",

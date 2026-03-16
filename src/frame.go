@@ -114,7 +114,7 @@ func ReadWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 		f.length = uint64(binary.BigEndian.Uint16(lenBuf))
 	}
 	if f.length == 127 {
-		lenBuf := make([]byte, 2)
+		lenBuf := make([]byte, 8)
 		_, err := io.ReadFull(reader, lenBuf)
 		if err != nil {
 			return f, err

@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send a close frame with close code and close reason which is too long (124) - total frame payload 126 octets",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 1,
    "expectation": "Clean close with protocol error code or dropped TCP connection.",
    "expected": {
       "OK": []
@@ -41,7 +41,7 @@
       "6": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:01:18.686Z",
+   "started": "2026-03-16T16:28:52.644Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1
@@ -101,7 +101,7 @@
          "RO",
          [
             6,
-            "8880376cb3d5"
+            "888021274541"
          ]
       ],
       [
@@ -114,7 +114,7 @@
          true,
          0,
          true,
-         "376cb3d5"
+         "21274541"
       ]
    ]
 }

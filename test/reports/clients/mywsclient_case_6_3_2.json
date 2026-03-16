@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send invalid UTF-8 text message in fragments of 1 octet, resulting in frames ending on positions which are not code point ends.<br><br>MESSAGE:<br>cebae1bdb9cf83cebcceb5eda080656469746564",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 1,
    "expectation": "The connection is failed immediately, since the payload is not valid UTF-8.",
    "expected": {
       "OK": []
@@ -42,7 +42,7 @@
       "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:18.225Z",
+   "started": "2026-03-16T16:28:48.241Z",
    "trafficStats": null,
    "txFrameStats": {
       "0": 20,
@@ -546,7 +546,7 @@
          "RO",
          [
             6,
-            "888025bd4a79"
+            "88800aebbd31"
          ]
       ],
       [
@@ -559,7 +559,7 @@
          true,
          0,
          true,
-         "25bd4a79"
+         "0aebbd31"
       ],
       [
          "TF",

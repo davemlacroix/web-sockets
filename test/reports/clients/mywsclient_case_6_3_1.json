@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send invalid UTF-8 text message unfragmented.<br><br>MESSAGE:<br>cebae1bdb9cf83cebcceb5eda080656469746564",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 1,
    "expectation": "The connection is failed immediately, since the payload is not valid UTF-8.",
    "expected": {
       "OK": []
@@ -42,7 +42,7 @@
       "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:18.222Z",
+   "started": "2026-03-16T16:28:48.239Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -104,7 +104,7 @@
          "RO",
          [
             6,
-            "88803542cd1f"
+            "8880cc44bbb1"
          ]
       ],
       [
@@ -117,7 +117,7 @@
          true,
          0,
          true,
-         "3542cd1f"
+         "cc44bbb1"
       ],
       [
          "TF",

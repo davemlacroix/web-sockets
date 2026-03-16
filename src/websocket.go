@@ -20,7 +20,7 @@ func main() {
 
 	fmt.Println("test count: ", n)
 
-	for i := 0; i < 4; i++ {
+	for i := 0; i < n; i++ {
 
 		RunTest(conn, i, agentName)
 	}

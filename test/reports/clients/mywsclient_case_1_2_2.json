@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send binary message message with payload of length 125.",
    "droppedByMe": true,
-   "duration": 1,
+   "duration": 2,
    "expectation": "Receive echo'ed binary message (with payload as sent). Clean close with normal code.",
    "expected": {
       "OK": [
@@ -47,7 +47,7 @@
       "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:17.942Z",
+   "started": "2026-03-16T16:27:26.587Z",
    "trafficStats": null,
    "txFrameStats": {
       "2": 1,
@@ -109,7 +109,7 @@
          "RO",
          [
             6,
-            "888000b91452"
+            "88806e795824"
          ]
       ],
       [
@@ -122,7 +122,7 @@
          true,
          0,
          true,
-         "00b91452"
+         "6e795824"
       ],
       [
          "TF",

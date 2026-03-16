@@ -202,7 +202,7 @@ pre.wirelog_tcp_closed_by_peer {color: #fff; margin: 0; background-color: #000; 
       <center><a href="https://autobahn-testsuite.readthedocs.io/" title="Autobahn WebSocket Testsuite"><img src="https://autobahn-testsuite.readthedocs.io/en/latest/_static/img/ws_protocol_test_report.png"          border="0" width="820" height="46" alt="Autobahn WebSocket Testsuite Report"></img></a></center>
       <center><a href="https://autobahn-testsuite.readthedocs.io/"           title="Autobahn WebSocket">          <img src="https://autobahn-testsuite.readthedocs.io/en/latest/_static/img/ws_protocol_test_report_autobahn.png" border="0" width="300" height="68" alt="Autobahn WebSocket">                 </img></a></center>
       <br/>
-      <p class="case case_ok">MyWSClient - <span style="font-size: 1.3em;"><b>Case 7.1.4</b></span> : Pass - <span style="font-size: 0.9em;"><b>1</b> ms @ 2026-03-16T16:01:18.657Z</a></p>
+      <p class="case case_ok">MyWSClient - <span style="font-size: 1.3em;"><b>Case 7.1.4</b></span> : Pass - <span style="font-size: 0.9em;"><b>1</b> ms @ 2026-03-16T16:28:52.627Z</a></p>
       <p class="case_text_block case_desc"><b>Case Description</b><br/><br/>Send text message after sending a close frame.</p>
       <p class="case_text_block case_expect"><b>Case Expectation</b><br/><br/>Clean close with normal code. Text message ignored.</p>
 
@@ -291,8 +291,8 @@ Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=</pre>
          <pre class="wirelog_tx_frame">               Hello World!</pre>
          <pre class="wirelog_tx_octets">005 TX OCTETS: 810c48656c6c6f20576f726c6421</pre>
          <pre class="wirelog_kill_after">006 FAIL CONNECTION AFTER 1.000000 sec</pre>
-         <pre class="wirelog_rx_octets">007 RX OCTETS: 8880eec89406</pre>
-         <pre class="wirelog_rx_frame">008 RX FRAME : OPCODE=8, FIN=True, RSV=0, PAYLOAD-LEN=0, MASKED=True, MASK=6565633839343036</pre>
+         <pre class="wirelog_rx_octets">007 RX OCTETS: 8880c31de5d3</pre>
+         <pre class="wirelog_rx_frame">008 RX FRAME : OPCODE=8, FIN=True, RSV=0, PAYLOAD-LEN=0, MASKED=True, MASK=6333316465356433</pre>
          <pre class="wirelog_tcp_closed_by_me">009 TCP DROPPED BY ME</pre>
       </div>
       <br/><hr/>

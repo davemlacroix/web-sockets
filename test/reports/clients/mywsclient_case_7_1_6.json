@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send 256K message followed by close then a ping",
    "droppedByMe": true,
-   "duration": 3,
+   "duration": 2,
    "expectation": "Case outcome depends on implementation defined close behavior. Message and close frame are sent back to back. If the close frame is processed before the text message write is complete (as can happen in asynchronous processing models) the close frame is processed first and the text message may not be received or may only be partially received.",
    "expected": {
       "NON-STRICT": [],
@@ -34,21 +34,28 @@
    "isServer": true,
    "localCloseCode": 1000,
    "localCloseReason": null,
-   "received": [],
+   "received": [
+      [
+         "message",
+         "",
+         false
+      ]
+   ],
    "remoteCloseCode": null,
    "remoteCloseReason": null,
    "reportCompressionRatio": false,
    "reportTime": false,
-   "result": "Close was processed before text message could be returned.",
+   "result": "Actual events differ from any expected.",
    "resultClose": "Connection was properly closed",
    "rxFrameStats": {
+      "1": 1,
       "8": 1
    },
    "rxOctetStats": {
-      "6": 1,
+      "12": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:01:18.663Z",
+   "started": "2026-03-16T16:28:52.632Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 2,
@@ -178,9 +185,21 @@
       [
          "RO",
          [
-            6,
-            "88805f1de9b7"
+            12,
+            "818076dc335a8880fd7c5d6c"
          ]
+      ],
+      [
+         "RF",
+         [
+            0,
+            ""
+         ],
+         1,
+         true,
+         0,
+         true,
+         "76dc335a"
       ],
       [
          "RF",
@@ -192,7 +211,7 @@
          true,
          0,
          true,
-         "5f1de9b7"
+         "fd7c5d6c"
       ]
    ]
 }

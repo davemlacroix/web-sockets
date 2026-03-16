@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send close with invalid close code 999",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 1,
    "expectation": "Clean close with protocol error code or drop TCP",
    "expected": {
       "OK": []
@@ -41,7 +41,7 @@
       "6": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:01:18.772Z",
+   "started": "2026-03-16T16:28:52.676Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1
@@ -101,7 +101,7 @@
          "RO",
          [
             6,
-            "888005f1fd6f"
+            "888099b72255"
          ]
       ],
       [
@@ -114,7 +114,7 @@
          true,
          0,
          true,
-         "05f1fd6f"
+         "99b72255"
       ]
    ]
 }

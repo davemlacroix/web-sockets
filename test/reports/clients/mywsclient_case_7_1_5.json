@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send message fragment1 followed by close then fragment",
    "droppedByMe": true,
-   "duration": 1,
+   "duration": 2,
    "expectation": "Clean close with normal code.",
    "expected": {
       "OK": []
@@ -41,7 +41,7 @@
       "6": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:01:18.660Z",
+   "started": "2026-03-16T16:28:52.630Z",
    "trafficStats": null,
    "txFrameStats": {
       "0": 1,
@@ -148,7 +148,7 @@
          "RO",
          [
             6,
-            "8880d0290b6c"
+            "88808af16755"
          ]
       ],
       [
@@ -161,7 +161,7 @@
          true,
          0,
          true,
-         "d0290b6c"
+         "8af16755"
       ]
    ]
 }

@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send text Message fragmented into 2 fragments, with both frame opcodes set to text, sent in one chop.",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 1,
    "expectation": "The connection is failed immediately, since all data frames after the initial data frame must have opcode 0.",
    "expected": {
       "OK": []
@@ -41,7 +41,7 @@
       "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:18.194Z",
+   "started": "2026-03-16T16:28:48.210Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 2,
@@ -125,7 +125,7 @@
          "RO",
          [
             6,
-            "88806a93919f"
+            "8880f9d7ac05"
          ]
       ],
       [
@@ -138,7 +138,7 @@
          true,
          0,
          true,
-         "6a93919f"
+         "f9d7ac05"
       ],
       [
          "TF",

@@ -1,14 +1,14 @@
 {
    "agent": "MyWSClient",
    "behavior": "FAILED",
-   "behaviorClose": "FAILED",
+   "behaviorClose": "OK",
    "case": 17,
-   "closedByMe": false,
+   "closedByMe": true,
    "createStats": true,
    "createWirelog": true,
    "description": "Send ping without payload.",
    "droppedByMe": true,
-   "duration": 1,
+   "duration": 1002,
    "expectation": "Pong (with empty payload) is sent in reply to Ping. Clean close with normal code.",
    "expected": {
       "OK": [
@@ -30,7 +30,7 @@
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "2.1",
    "isServer": true,
-   "localCloseCode": 1000,
+   "localCloseCode": null,
    "localCloseReason": null,
    "received": [],
    "remoteCloseCode": null,
@@ -38,7 +38,7 @@
    "reportCompressionRatio": false,
    "reportTime": false,
    "result": "Actual events differ from any expected.",
-   "resultClose": "The connection was failed by the wrong endpoint",
+   "resultClose": "Connection was properly closed",
    "rxFrameStats": {
       "8": 1
    },
@@ -46,15 +46,14 @@
       "6": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:01:17.965Z",
+   "started": "2026-03-16T16:27:59.629Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1,
       "9": 1
    },
    "txOctetStats": {
-      "2": 1,
-      "4": 1,
+      "2": 2,
       "208": 1
    },
    "wasClean": true,
@@ -105,29 +104,13 @@
          1
       ],
       [
-         "RO",
-         [
-            6,
-            "8880167b0bc5"
-         ]
-      ],
-      [
-         "RF",
-         [
-            0,
-            ""
-         ],
-         8,
-         true,
-         0,
-         true,
-         "167b0bc5"
+         "TIE"
       ],
       [
          "TF",
          [
-            2,
-            "0x03e8"
+            0,
+            ""
          ],
          8,
          true,
@@ -140,10 +123,29 @@
       [
          "TO",
          [
-            4,
-            "880203e8"
+            2,
+            "8800"
          ],
          false
+      ],
+      [
+         "RO",
+         [
+            6,
+            "888075bbefd8"
+         ]
+      ],
+      [
+         "RF",
+         [
+            0,
+            ""
+         ],
+         8,
+         true,
+         0,
+         true,
+         "75bbefd8"
       ]
    ]
 }
