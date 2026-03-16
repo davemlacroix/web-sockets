@@ -86,6 +86,19 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 		return message, nil
 	}
 
+	if message.Type() == Ping {
+		body, err := io.ReadAll(message)
+		if err != nil {
+			return nil, err
+		}
+
+		SendMessage(c.conn, Pong, body)
+		message, err = c.NextMessage()
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return message, nil
 }
 

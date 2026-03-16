@@ -14,6 +14,8 @@ const (
 	Text   Opcode = 1
 	Binary Opcode = 2
 	Close  Opcode = 8
+	Ping   Opcode = 9
+	Pong   Opcode = 10
 )
 
 type Frame interface {
