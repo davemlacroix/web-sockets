@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"strconv"
 )
@@ -20,14 +21,16 @@ func main() {
 
 	fmt.Println("test count: ", n)
 
-	for i := 0; i < n; i++ {
+	//RunTest(conn, 2, agentName)
+
+	for i := 1; i <= n; i++ {
 		RunTest(conn, i, agentName)
 	}
 
-	err = UpdateReports(conn, agentName)
-	if err != nil {
+	err2 := UpdateReports(conn, agentName)
+	if err2 != nil {
 		fmt.Println("error updating reports")
-		log.Fatal(err)
+		log.Fatal(err2)
 	}
 }
 
@@ -48,18 +51,27 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 		}
 
 		if message.Type() == Close {
+			conn.Close()
 			break
 		}
 
 		if message.Type() == Text || message.Type() == Binary {
 			body := make([]byte, 4096) //to start only work with frames less than 4096
 			l, err := message.Read(body)
-			if err != nil {
+			// fmt.Println(l)
+			// fmt.Println(message.Type())
+			// fmt.Println(body[:l])
+
+			if err != nil && err != io.EOF {
 				fmt.Println("error with test " + strconv.Itoa(n) + ": " + err.Error())
 				break
 			}
 
 			SendMessage(conn.conn, message.Type(), body[:l])
+
+			if err == io.EOF {
+				break
+			}
 		}
 	}
 

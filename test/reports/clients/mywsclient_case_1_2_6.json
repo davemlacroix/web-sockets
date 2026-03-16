@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send binary message message with payload of length 65535.",
    "droppedByMe": true,
-   "duration": 11020,
+   "duration": 4,
    "expectation": "Receive echo'ed binary message (with payload as sent). Clean close with normal code.",
    "expected": {
       "OK": [
@@ -31,12 +31,12 @@
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "1.2.6",
    "isServer": true,
-   "localCloseCode": 1001,
-   "localCloseReason": "Going Away",
+   "localCloseCode": 1002,
+   "localCloseReason": "RSV = 7 and no extension negotiated",
    "received": [
       [
          "message",
-         "",
+         "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ...",
          true
       ]
    ],
@@ -50,23 +50,23 @@
       "2": 1
    },
    "rxOctetStats": {
-      "6": 1,
-      "297": 1
+      "297": 1,
+      "8200": 1
    },
-   "started": "2026-03-16T16:27:28.599Z",
+   "started": "2026-03-16T17:36:14.643Z",
    "trafficStats": null,
    "txFrameStats": {
       "2": 1,
       "8": 1
    },
    "txOctetStats": {
-      "14": 1,
+      "39": 1,
       "208": 1,
       "65539": 1
    },
    "wasClean": false,
-   "wasCloseHandshakeTimeout": true,
-   "wasNotCleanReason": "peer did not respond (in time) in closing handshake",
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
    "wasServerConnectionDropTimeout": false,
    "wirelog": [
@@ -114,30 +114,27 @@
       [
          "RO",
          [
-            6,
-            "8280fee3aff7"
+            8200,
+            "82fe10002e1a05afd0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51d0e4fb51 ..."
          ]
       ],
       [
          "RF",
          [
-            0,
-            ""
+            4096,
+            "0xfefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefefe ..."
          ],
          2,
          true,
          0,
          true,
-         "fee3aff7"
-      ],
-      [
-         "KLE"
+         "2e1a05af"
       ],
       [
          "TF",
          [
-            12,
-            "0x03e9476f696e672041776179"
+            37,
+            "0x03ea525356203d203720616e64206e6f20657874656e73696f6e206e65676f746961746564"
          ],
          8,
          true,
@@ -150,8 +147,8 @@
       [
          "TO",
          [
-            14,
-            "880c03e9476f696e672041776179"
+            39,
+            "882503ea525356203d203720616e64206e6f20657874656e73696f6e206e65676f746961746564"
          ],
          false
       ]

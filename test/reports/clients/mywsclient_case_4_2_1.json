@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send frame with reserved control <b>Opcode = 11</b>.",
    "droppedByMe": true,
-   "duration": 1005,
+   "duration": 1006,
    "expectation": "The connection is failed immediately.",
    "expected": {
       "OK": []
@@ -28,7 +28,7 @@
    "localCloseCode": 1001,
    "localCloseReason": "Going Away",
    "received": [],
-   "remoteCloseCode": null,
+   "remoteCloseCode": 20299,
    "remoteCloseReason": null,
    "reportCompressionRatio": false,
    "reportTime": false,
@@ -38,10 +38,10 @@
       "8": 1
    },
    "rxOctetStats": {
-      "6": 1,
+      "10": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:28:25.081Z",
+   "started": "2026-03-16T17:36:39.988Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1,
@@ -52,7 +52,7 @@
       "14": 1,
       "208": 1
    },
-   "wasClean": true,
+   "wasClean": false,
    "wasCloseHandshakeTimeout": false,
    "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
@@ -127,21 +127,21 @@
       [
          "RO",
          [
-            6,
-            "8880caa5266a"
+            10,
+            "8882955b13e5da104f4b"
          ]
       ],
       [
          "RF",
          [
-            0,
-            ""
+            2,
+            "OK"
          ],
          8,
          true,
          0,
          true,
-         "caa5266a"
+         "955b13e5"
       ]
    ]
 }

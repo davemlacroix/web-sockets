@@ -1,9 +1,9 @@
 {
    "agent": "MyWSClient",
-   "behavior": "OK",
-   "behaviorClose": "OK",
+   "behavior": "FAILED",
+   "behaviorClose": "FAILED",
    "case": 130,
-   "closedByMe": false,
+   "closedByMe": true,
    "createStats": true,
    "createWirelog": true,
    "description": "Send a text message with payload which is not valid UTF-8 in one fragment.<br><br>Payload: 0xdf",
@@ -21,28 +21,28 @@
       "closedByWrongEndpointIsFatal": true,
       "requireClean": false
    },
-   "failedByMe": false,
+   "failedByMe": true,
    "httpRequest": "GET /runCase?case=130&agent=MyWSClient HTTP/1.1\r\nHost: 127.0.0.1:9001\r\nUser-Agent: Go-http-client/1.1\r\nConnection: upgrade\r\nOrigin: 127.0.0.1\r\nSec-Websocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-Websocket-Protocol: chat, superchat\r\nSec-Websocket-Version: 13\r\nUpgrade: websocket\r\nUpgrade: websocket\r\n\r\n",
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "6.14.6",
    "isServer": true,
-   "localCloseCode": 1000,
-   "localCloseReason": null,
+   "localCloseCode": 1007,
+   "localCloseReason": "UTF-8 text message payload ended within Unicode code point at payload octet index 1",
    "received": [],
    "remoteCloseCode": null,
    "remoteCloseReason": null,
    "reportCompressionRatio": false,
    "reportTime": false,
    "result": "Actual events match at least one expected.",
-   "resultClose": "Connection was properly closed",
+   "resultClose": "The connection was failed by the wrong endpoint",
    "rxFrameStats": {
-      "8": 1
+      "1": 1
    },
    "rxOctetStats": {
-      "6": 1,
+      "18": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:28:52.376Z",
+   "started": "2026-03-16T17:37:09.059Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -50,10 +50,10 @@
    },
    "txOctetStats": {
       "3": 1,
-      "4": 1,
+      "87": 1,
       "208": 1
    },
-   "wasClean": true,
+   "wasClean": false,
    "wasCloseHandshakeTimeout": false,
    "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
@@ -103,27 +103,27 @@
       [
          "RO",
          [
-            6,
-            "8880f48c53e5"
+            18,
+            "81815f0f975180df8882f036a3bebf7d4f4b"
          ]
       ],
       [
          "RF",
          [
-            0,
-            ""
+            1,
+            "0xdf"
          ],
-         8,
+         1,
          true,
          0,
          true,
-         "f48c53e5"
+         "5f0f9751"
       ],
       [
          "TF",
          [
-            2,
-            "0x03e8"
+            85,
+            "0x03ef5554462d382074657874206d657373616765207061796c6f616420656e6465642077697468696e20556e69636f646520636f646520706f696e7420617420 ..."
          ],
          8,
          true,
@@ -136,8 +136,8 @@
       [
          "TO",
          [
-            4,
-            "880203e8"
+            87,
+            "885503ef5554462d382074657874206d657373616765207061796c6f616420656e6465642077697468696e20556e69636f646520636f646520706f696e742061 ..."
          ],
          false
       ]

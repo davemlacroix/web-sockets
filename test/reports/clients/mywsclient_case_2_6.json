@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send ping with binary payload of 125 octets, send in octet-wise chops.",
    "droppedByMe": true,
-   "duration": 3002,
+   "duration": 3001,
    "expectation": "Pong with payload echo'ed is sent in reply to Ping. Implementations must be TCP clean. Clean close with normal code.",
    "expected": {
       "OK": [
@@ -43,7 +43,7 @@
    "rxOctetStats": {
       "297": 1
    },
-   "started": "2026-03-16T16:28:06.649Z",
+   "started": "2026-03-16T17:36:22.917Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1,

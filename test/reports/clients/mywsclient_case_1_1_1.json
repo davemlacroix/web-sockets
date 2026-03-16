@@ -1,14 +1,14 @@
 {
    "agent": "MyWSClient",
-   "behavior": "FAILED",
-   "behaviorClose": "FAILED",
+   "behavior": "OK",
+   "behaviorClose": "UNCLEAN",
    "case": 1,
-   "closedByMe": false,
+   "closedByMe": true,
    "createStats": true,
    "createWirelog": true,
    "description": "Send text message with payload 0.",
    "droppedByMe": true,
-   "duration": 2,
+   "duration": 5,
    "expectation": "Receive echo'ed text message (with empty payload). Clean close with normal code.",
    "expected": {
       "OK": [
@@ -26,28 +26,35 @@
       "closedByMe": true,
       "requireClean": true
    },
-   "failedByMe": false,
+   "failedByMe": true,
    "httpRequest": "GET /runCase?case=1&agent=MyWSClient HTTP/1.1\r\nHost: 127.0.0.1:9001\r\nUser-Agent: Go-http-client/1.1\r\nConnection: upgrade\r\nOrigin: 127.0.0.1\r\nSec-Websocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-Websocket-Protocol: chat, superchat\r\nSec-Websocket-Version: 13\r\nUpgrade: websocket\r\nUpgrade: websocket\r\n\r\n",
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "1.1.1",
    "isServer": true,
    "localCloseCode": 1000,
    "localCloseReason": null,
-   "received": [],
-   "remoteCloseCode": null,
+   "received": [
+      [
+         "message",
+         "",
+         false
+      ]
+   ],
+   "remoteCloseCode": 20299,
    "remoteCloseReason": null,
    "reportCompressionRatio": false,
    "reportTime": false,
-   "result": "Actual events differ from any expected.",
-   "resultClose": "The connection was failed by the wrong endpoint",
+   "result": "Actual events match at least one expected.",
+   "resultClose": "The spec requires the connection to be failed cleanly here",
    "rxFrameStats": {
+      "1": 1,
       "8": 1
    },
    "rxOctetStats": {
-      "6": 1,
+      "16": 1,
       "296": 1
    },
-   "started": "2026-03-16T16:26:53.548Z",
+   "started": "2026-03-16T17:36:10.594Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
@@ -58,7 +65,7 @@
       "4": 1,
       "208": 1
    },
-   "wasClean": true,
+   "wasClean": false,
    "wasCloseHandshakeTimeout": false,
    "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
@@ -108,8 +115,8 @@
       [
          "RO",
          [
-            6,
-            "8880de866154"
+            16,
+            "81803ca8d6ce88826debfa0022a04f4b"
          ]
       ],
       [
@@ -118,11 +125,11 @@
             0,
             ""
          ],
-         8,
+         1,
          true,
          0,
          true,
-         "de866154"
+         "3ca8d6ce"
       ],
       [
          "TF",
@@ -145,6 +152,18 @@
             "880203e8"
          ],
          false
+      ],
+      [
+         "RF",
+         [
+            2,
+            "OK"
+         ],
+         8,
+         true,
+         0,
+         true,
+         "6debfa00"
       ]
    ]
 }

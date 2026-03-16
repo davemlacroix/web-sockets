@@ -73,13 +73,17 @@ func (f *WSFrame) Write(conn net.Conn, body []byte) error {
 
 	if f.masked {
 		frame = append(frame, f.mask[:]...)
-		frame = append(frame, f.mask[:0]...)
+		masked := make([]byte, f.length)
+		copy(masked, body)
 
 		for i := uint64(0); i < f.length; i++ {
-			body[i] ^= f.mask[i%4]
+			masked[i] ^= f.mask[i%4]
 		}
+
+		frame = append(frame, masked[:]...)
 	}
 
+	// fmt.Println(frame)
 	if body != nil {
 		frame = append(frame, body[:f.length]...)
 	}

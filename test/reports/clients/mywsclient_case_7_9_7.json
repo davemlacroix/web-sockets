@@ -1,7 +1,7 @@
 {
    "agent": "MyWSClient",
-   "behavior": "OK",
-   "behaviorClose": "OK",
+   "behavior": "FAILED",
+   "behaviorClose": "WRONG CODE",
    "case": 242,
    "closedByMe": true,
    "createStats": true,
@@ -20,7 +20,7 @@
       "closedByMe": true,
       "requireClean": false
    },
-   "failedByMe": false,
+   "failedByMe": true,
    "httpRequest": "GET /runCase?case=242&agent=MyWSClient HTTP/1.1\r\nHost: 127.0.0.1:9001\r\nUser-Agent: Go-http-client/1.1\r\nConnection: upgrade\r\nOrigin: 127.0.0.1\r\nSec-Websocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-Websocket-Protocol: chat, superchat\r\nSec-Websocket-Version: 13\r\nUpgrade: websocket\r\nUpgrade: websocket\r\n\r\n",
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "7.9.7",
@@ -28,20 +28,20 @@
    "localCloseCode": 1100,
    "localCloseReason": null,
    "received": [],
-   "remoteCloseCode": null,
+   "remoteCloseCode": 20299,
    "remoteCloseReason": null,
    "reportCompressionRatio": false,
    "reportTime": false,
-   "result": "Actual events match at least one expected.",
-   "resultClose": "Connection was properly closed",
+   "result": "The close code should have been 1002 or empty",
+   "resultClose": "The close code should have been 1002 or empty",
    "rxFrameStats": {
       "8": 1
    },
    "rxOctetStats": {
-      "6": 1,
+      "10": 1,
       "298": 1
    },
-   "started": "2026-03-16T16:28:52.689Z",
+   "started": "2026-03-16T17:37:09.276Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1
@@ -50,7 +50,7 @@
       "4": 1,
       "208": 1
    },
-   "wasClean": true,
+   "wasClean": false,
    "wasCloseHandshakeTimeout": false,
    "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
@@ -100,21 +100,21 @@
       [
          "RO",
          [
-            6,
-            "88801e562d27"
+            10,
+            "88820fb7b8e440fc4f4b"
          ]
       ],
       [
          "RF",
          [
-            0,
-            ""
+            2,
+            "OK"
          ],
          8,
          true,
          0,
          true,
-         "1e562d27"
+         "0fb7b8e4"
       ]
    ]
 }

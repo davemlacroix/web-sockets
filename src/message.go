@@ -101,7 +101,7 @@ func SendMessage(conn net.Conn, opcode Opcode, body []byte) {
 	frame := NewWSFrame(true)
 	frame.final = true
 	frame.opcode = opcode
-	frame.length = 0
+	frame.length = uint64(len(body))
 
 	frame.Write(conn, body)
 }

@@ -1,7 +1,7 @@
 {
    "agent": "MyWSClient",
    "behavior": "FAILED",
-   "behaviorClose": "OK",
+   "behaviorClose": "UNCLEAN",
    "case": 17,
    "closedByMe": true,
    "createStats": true,
@@ -25,7 +25,7 @@
       "closedByMe": true,
       "requireClean": true
    },
-   "failedByMe": false,
+   "failedByMe": true,
    "httpRequest": "GET /runCase?case=17&agent=MyWSClient HTTP/1.1\r\nHost: 127.0.0.1:9001\r\nUser-Agent: Go-http-client/1.1\r\nConnection: upgrade\r\nOrigin: 127.0.0.1\r\nSec-Websocket-Key: dGhlIHNhbXBsZSBub25jZQ==\r\nSec-Websocket-Protocol: chat, superchat\r\nSec-Websocket-Version: 13\r\nUpgrade: websocket\r\nUpgrade: websocket\r\n\r\n",
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "2.1",
@@ -33,20 +33,20 @@
    "localCloseCode": null,
    "localCloseReason": null,
    "received": [],
-   "remoteCloseCode": null,
+   "remoteCloseCode": 20299,
    "remoteCloseReason": null,
    "reportCompressionRatio": false,
    "reportTime": false,
    "result": "Actual events differ from any expected.",
-   "resultClose": "Connection was properly closed",
+   "resultClose": "The spec requires the connection to be failed cleanly here",
    "rxFrameStats": {
       "8": 1
    },
    "rxOctetStats": {
-      "6": 1,
+      "10": 1,
       "297": 1
    },
-   "started": "2026-03-16T16:27:59.629Z",
+   "started": "2026-03-16T17:36:14.656Z",
    "trafficStats": null,
    "txFrameStats": {
       "8": 1,
@@ -56,7 +56,7 @@
       "2": 2,
       "208": 1
    },
-   "wasClean": true,
+   "wasClean": false,
    "wasCloseHandshakeTimeout": false,
    "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
@@ -131,21 +131,21 @@
       [
          "RO",
          [
-            6,
-            "888075bbefd8"
+            10,
+            "8882c5f291fe8ab94f4b"
          ]
       ],
       [
          "RF",
          [
-            0,
-            ""
+            2,
+            "OK"
          ],
          8,
          true,
          0,
          true,
-         "75bbefd8"
+         "c5f291fe"
       ]
    ]
 }

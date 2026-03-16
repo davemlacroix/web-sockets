@@ -8,7 +8,7 @@
    "createWirelog": true,
    "description": "Send text message message with payload of length 65535.",
    "droppedByMe": true,
-   "duration": 11006,
+   "duration": 5,
    "expectation": "Receive echo'ed text message (with payload as sent). Clean close with normal code.",
    "expected": {
       "OK": [
@@ -31,12 +31,12 @@
    "httpResponse": "HTTP/1.1 101 Switching Protocols\r\nServer: AutobahnTestSuite/25.10.1-0.10.9\r\nX-Powered-By: AutobahnPython/0.10.9\r\nUpgrade: WebSocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=\r\n\r\n",
    "id": "1.1.6",
    "isServer": true,
-   "localCloseCode": 1001,
-   "localCloseReason": "Going Away",
+   "localCloseCode": 1002,
+   "localCloseReason": "RSV = 2 and no extension negotiated",
    "received": [
       [
          "message",
-         "",
+         "**************************************************************** ...",
          false
       ]
    ],
@@ -50,23 +50,23 @@
       "1": 1
    },
    "rxOctetStats": {
-      "6": 1,
-      "296": 1
+      "296": 1,
+      "8200": 1
    },
-   "started": "2026-03-16T16:26:55.562Z",
+   "started": "2026-03-16T17:36:12.616Z",
    "trafficStats": null,
    "txFrameStats": {
       "1": 1,
       "8": 1
    },
    "txOctetStats": {
-      "14": 1,
+      "39": 1,
       "208": 1,
       "65539": 1
    },
    "wasClean": false,
-   "wasCloseHandshakeTimeout": true,
-   "wasNotCleanReason": "peer did not respond (in time) in closing handshake",
+   "wasCloseHandshakeTimeout": false,
+   "wasNotCleanReason": null,
    "wasOpenHandshakeTimeout": false,
    "wasServerConnectionDropTimeout": false,
    "wirelog": [
@@ -114,30 +114,27 @@
       [
          "RO",
          [
-            6,
-            "8180170aa3d3"
+            8200,
+            "81fe100010668ba03a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a3a4ca18a ..."
          ]
       ],
       [
          "RF",
          [
-            0,
-            ""
+            4096,
+            "**************************************************************** ..."
          ],
          1,
          true,
          0,
          true,
-         "170aa3d3"
-      ],
-      [
-         "KLE"
+         "10668ba0"
       ],
       [
          "TF",
          [
-            12,
-            "0x03e9476f696e672041776179"
+            37,
+            "0x03ea525356203d203220616e64206e6f20657874656e73696f6e206e65676f746961746564"
          ],
          8,
          true,
@@ -150,8 +147,8 @@
       [
          "TO",
          [
-            14,
-            "880c03e9476f696e672041776179"
+            39,
+            "882503ea525356203d203220616e64206e6f20657874656e73696f6e206e65676f746961746564"
          ],
          false
       ]
