@@ -20,8 +20,8 @@ func main() {
 	}
 	fmt.Println("test count: ", n)
 
-	RunTest(conn, 17, agentName)
-	RunTest(conn, 18, agentName)
+	// RunTest(conn, 21, agentName)
+	// RunTest(conn, 18, agentName)
 
 	for i := 1; i <= n; i++ {
 		RunTest(conn, i, agentName)
@@ -51,7 +51,6 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 		}
 
 		if message.Type() == Close {
-			conn.Close()
 			break
 		}
 

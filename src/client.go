@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -92,6 +94,15 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 			return nil, err
 		}
 
+		fmt.Println("size of ping...")
+		fmt.Println(len(body))
+		if len(body) > 125 {
+			errCode := make([]byte, 2)
+			binary.BigEndian.PutUint16(errCode, uint16(1002))
+			SendMessage(c.conn, Close, errCode)
+			c.connected = false
+			c.conn.Close()
+		}
 		SendMessage(c.conn, Pong, body)
 		message, err = c.NextMessage()
 		if err != nil {
@@ -103,6 +114,7 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 }
 
 func (c *WSClient) Close() error {
+
 	SendMessage(c.conn, Close, []byte("OK"))
 	//need to wait for a close frame response
 	//and still process all remaining messages?
