@@ -24,7 +24,7 @@ type WSFrame struct {
 	opcode Opcode
 	masked bool
 	length uint64
-	mask   int32
+	mask   [4]byte
 }
 
 func NewWSFrame() *WSFrame {
@@ -63,9 +63,7 @@ func (f *WSFrame) Write(conn net.Conn, content []byte) error {
 	}
 
 	if f.masked {
-		maskBuf := make([]byte, 4)
-		binary.BigEndian.PutUint32(maskBuf, uint32(f.mask))
-		header = append(header, maskBuf...)
+		header = append(header, f.mask[:]...)
 	}
 
 	frame := append(header, content[:f.length]...)
@@ -108,12 +106,10 @@ func ReadWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 	}
 
 	if f.masked {
-		maskBuf := make([]byte, 4)
-		_, err := io.ReadFull(reader, maskBuf)
+		_, err := io.ReadFull(reader, f.mask[:])
 		if err != nil {
 			return f, err
 		}
-		f.mask = int32(binary.BigEndian.Uint32(maskBuf))
 	}
 
 	return f, nil

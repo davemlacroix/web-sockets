@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"crypto/rand"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
@@ -105,9 +104,8 @@ func SendCloseMessage(conn net.Conn) {
 	frame.opcode = Close
 	frame.length = 0
 	frame.masked = true
-	b := make([]byte, 4)
-	rand.Read(b)
-	frame.mask = int32(binary.BigEndian.Uint32(b))
 
+	rand.Read(frame.mask[:])
+	b := make([]byte, 4)
 	frame.Write(conn, b)
 }
