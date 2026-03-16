@@ -20,9 +20,8 @@ func main() {
 	}
 	fmt.Println("test count: ", n)
 
-	// RunTest(conn, 3, agentName)
-	// RunTest(conn, 4, agentName)
 	// RunTest(conn, 5, agentName)
+	// RunTest(conn, 6, agentName)
 
 	for i := 1; i <= n; i++ {
 		RunTest(conn, i, agentName)
@@ -57,8 +56,10 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 		}
 
 		if message.Type() == Text || message.Type() == Binary {
-			body := make([]byte, 4096) //to start only work with frames less than 4096
-			l, err := message.Read(body)
+			// body := make([]byte, 4096) //to start only work with frames less than 4096
+			// l, err := message.Read(body)
+
+			body, err := io.ReadAll(message)
 			// fmt.Println(l)
 			// fmt.Println(message.Type())
 			// fmt.Println(body[:l])
@@ -68,7 +69,7 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 				break
 			}
 
-			SendMessage(conn.conn, message.Type(), body[:l])
+			SendMessage(conn.conn, message.Type(), body)
 
 			if err == io.EOF {
 				break
