@@ -74,7 +74,7 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 
 	if message.Type() == Close {
 		c.connected = false
-		SendCloseMessage(c.conn)
+		SendMessage(c.conn, Close, nil)
 		c.conn.Close()
 		return message, nil
 	}
@@ -83,7 +83,7 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 }
 
 func (c *WSClient) Close() error {
-	SendCloseMessage(c.conn)
+	SendMessage(c.conn, Close, nil)
 	//need to wait for a close frame response
 	c.connected = false
 	defer c.conn.Close()

@@ -12,8 +12,8 @@ type Opcode int
 
 const (
 	Text   Opcode = 1
-	Binary        = 2
-	Close         = 8
+	Binary Opcode = 2
+	Close  Opcode = 8
 )
 
 type Frame interface {
@@ -33,20 +33,21 @@ func NewWSFrame(masked bool) *WSFrame {
 	if masked {
 		rand.Read(mask[:])
 	}
+
 	return &WSFrame{
 		masked: masked,
 		mask:   mask,
 	}
 }
 
-func (f *WSFrame) Write(conn net.Conn, content []byte) error {
-	var header []byte
+func (f *WSFrame) Write(conn net.Conn, body []byte) error {
+	var frame []byte
 	b1 := byte(0)
 	if f.final {
 		b1 |= 0x80
 	}
 	b1 |= byte(f.opcode) & 0x0F
-	header = append(header, b1)
+	frame = append(frame, b1)
 
 	b2 := byte(0)
 	if f.masked {
@@ -55,26 +56,34 @@ func (f *WSFrame) Write(conn net.Conn, content []byte) error {
 
 	if f.length <= 125 {
 		b2 |= byte(f.length)
-		header = append(header, b2)
+		frame = append(frame, b2)
 	} else if f.length <= 0xFFFF {
 		b2 |= 126
-		header = append(header, b2)
+		frame = append(frame, b2)
 		extLen := make([]byte, 2)
 		binary.BigEndian.PutUint16(extLen, uint16(f.length))
-		header = append(header, extLen...)
+		frame = append(frame, extLen...)
 	} else {
 		b2 |= 127
-		header = append(header, b2)
+		frame = append(frame, b2)
 		extLen := make([]byte, 8)
 		binary.BigEndian.PutUint64(extLen, uint64(f.length))
-		header = append(header, extLen...)
+		frame = append(frame, extLen...)
 	}
 
 	if f.masked {
-		header = append(header, f.mask[:]...)
+		frame = append(frame, f.mask[:]...)
+		frame = append(frame, f.mask[:0]...)
+
+		for i := uint64(0); i < f.length; i++ {
+			body[i] ^= f.mask[i%4]
+		}
 	}
 
-	frame := append(header, content[:f.length]...)
+	if body != nil {
+		frame = append(frame, body[:f.length]...)
+	}
+
 	_, err := conn.Write(frame)
 	return err
 }

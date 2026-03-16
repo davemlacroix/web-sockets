@@ -97,12 +97,11 @@ func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
 	return m, nil
 }
 
-func SendCloseMessage(conn net.Conn) {
+func SendMessage(conn net.Conn, opcode Opcode, body []byte) {
 	frame := NewWSFrame(true)
 	frame.final = true
-	frame.opcode = Close
+	frame.opcode = opcode
 	frame.length = 0
 
-	b := make([]byte, 4)
-	frame.Write(conn, b)
+	frame.Write(conn, body)
 }
