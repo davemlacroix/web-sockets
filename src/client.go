@@ -70,8 +70,16 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 	}
 
 	message, err := NextWSMessage(c.reader)
+
 	if err != nil {
 		return nil, err
+	}
+
+	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {
+		errCode := make([]byte, 2)
+		binary.BigEndian.PutUint16(errCode, uint16(1002))
+		SendMessage(c.conn, Close, errCode)
+		return nil, errors.New("rsv fields should not be in use")
 	}
 
 	if message.Type() == Close {

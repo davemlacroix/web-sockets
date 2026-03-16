@@ -101,6 +101,7 @@ func (m *WSMessage) ReadText() (string, error) {
 
 func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
 	frame, err := ReadWSFrame(reader)
+
 	if err != nil {
 		return nil, err
 	}

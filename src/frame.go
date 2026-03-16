@@ -24,6 +24,9 @@ type Frame interface {
 
 type WSFrame struct {
 	final            bool
+	rsv1             bool
+	rsv2             bool
+	rsv3             bool
 	opcode           Opcode
 	masked           bool
 	length           uint64
@@ -103,6 +106,9 @@ func ReadWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 		return f, err
 	}
 	f.final = (b & 0x80) != 0
+	f.rsv1 = (b & 0x40) != 0
+	f.rsv2 = (b & 0x20) != 0
+	f.rsv3 = (b & 0x10) != 0
 	f.opcode = Opcode(b & 0x0F)
 
 	b, err = reader.ReadByte()
