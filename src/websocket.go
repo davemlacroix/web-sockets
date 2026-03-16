@@ -20,9 +20,9 @@ func main() {
 
 	fmt.Println("test count: ", n)
 
-	for i := 0; i < n; i++ {
-		path := "/runCase?case=" + strconv.Itoa(i) + "&agent=" + agentName
-		RunTest(conn, path)
+	for i := 0; i < 4; i++ {
+
+		RunTest(conn, i, agentName)
 	}
 
 	err = UpdateReports(conn, agentName)
@@ -32,12 +32,36 @@ func main() {
 	}
 }
 
-func RunTest(conn *WSClient, path string) error {
+func RunTest(conn *WSClient, n int, agentName string) error {
+	path := "/runCase?case=" + strconv.Itoa(n) + "&agent=" + agentName
 	err := conn.Connect(path)
 	defer conn.Close()
 	if err != nil {
 		fmt.Println("error with initial connection")
 		log.Fatal(err)
+	}
+
+	for {
+		message, err := conn.NextMessage()
+		if err != nil {
+			fmt.Println("error with test " + strconv.Itoa(n) + ": " + err.Error())
+			break
+		}
+
+		if message.Type() == Close {
+			break
+		}
+
+		if message.Type() == Text || message.Type() == Binary {
+			body := make([]byte, 4096) //to start only work with frames less than 4096
+			_, err := message.Read(body)
+			if err != nil {
+				fmt.Println("error with test" + strconv.Itoa(n) + ": " + err.Error())
+				break
+			}
+
+			SendMessage(conn.conn, message.Type(), body[:])
+		}
 	}
 
 	return nil
@@ -83,7 +107,7 @@ func GetTestCount(conn *WSClient) (int, error) {
 }
 
 func UpdateReports(conn *WSClient, agentName string) error {
-	err := conn.Connect("/updateReports?agent" + agentName)
+	err := conn.Connect("/updateReports?agent=" + agentName)
 	defer conn.Close()
 	if err != nil {
 		fmt.Println("error with initial connection")

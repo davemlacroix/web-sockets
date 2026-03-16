@@ -9,6 +9,7 @@ import (
 
 type Message interface {
 	Type() Opcode
+	Read(p []byte) (n int, err error)
 	ReadText() (string, error)
 }
 
