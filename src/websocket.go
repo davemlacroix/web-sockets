@@ -21,6 +21,12 @@ func main() {
 	fmt.Println("test count: ", n)
 
 	//loop through all test cases and initiate a connection
+
+	err = UpdateReports(conn)
+	if err != nil {
+		fmt.Println("error updating reports")
+		log.Fatal(err)
+	}
 }
 
 func GetTestCount(conn *WSClient) (int, error) {
@@ -33,12 +39,10 @@ func GetTestCount(conn *WSClient) (int, error) {
 
 	message, err := conn.NextMessage()
 	if err != nil {
-		fmt.Println("error reading frame")
 		return 0, err
 	}
 
 	if message.Type() != Text {
-		fmt.Println("unexpected frame type")
 		return 0, err
 	}
 
@@ -62,4 +66,24 @@ func GetTestCount(conn *WSClient) (int, error) {
 	}
 
 	return count, nil
+}
+
+func UpdateReports(conn *WSClient) error {
+	err := conn.Connect("/updateReports?agent=MyWSClient")
+	defer conn.Close()
+	if err != nil {
+		fmt.Println("error with initial connection")
+		log.Fatal(err)
+	}
+
+	message, err := conn.NextMessage()
+	if err != nil {
+		return err
+	}
+
+	if message.Type() != Close {
+		return errors.New("expected close message opcode")
+	}
+
+	return nil
 }
