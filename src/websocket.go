@@ -18,10 +18,11 @@ func main() {
 		fmt.Println("error reading in number of tests")
 		log.Fatal(err)
 	}
-
 	fmt.Println("test count: ", n)
 
-	//RunTest(conn, 2, agentName)
+	// RunTest(conn, 3, agentName)
+	// RunTest(conn, 4, agentName)
+	// RunTest(conn, 5, agentName)
 
 	for i := 1; i <= n; i++ {
 		RunTest(conn, i, agentName)

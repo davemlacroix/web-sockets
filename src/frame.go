@@ -21,11 +21,12 @@ type Frame interface {
 }
 
 type WSFrame struct {
-	final  bool
-	opcode Opcode
-	masked bool
-	length uint64
-	mask   [4]byte
+	final            bool
+	opcode           Opcode
+	masked           bool
+	length           uint64
+	mask             [4]byte
+	payloadRemaining uint64
 }
 
 func NewWSFrame(masked bool) *WSFrame {
@@ -116,8 +117,7 @@ func ReadWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 			return f, err
 		}
 		f.length = uint64(binary.BigEndian.Uint16(lenBuf))
-	}
-	if f.length == 127 {
+	} else if f.length == 127 {
 		lenBuf := make([]byte, 8)
 		_, err := io.ReadFull(reader, lenBuf)
 		if err != nil {
@@ -126,6 +126,7 @@ func ReadWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 		f.length = uint64(binary.BigEndian.Uint64(lenBuf))
 	}
 
+	f.payloadRemaining = f.length
 	if f.masked {
 		_, err := io.ReadFull(reader, f.mask[:])
 		if err != nil {
