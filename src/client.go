@@ -15,7 +15,7 @@ type WSClient struct {
 }
 
 type Client interface {
-	Connect() error
+	Connect(urlPath string) error
 	NextMessage() (*Message, error)
 	Close()
 }
@@ -26,7 +26,7 @@ func NewWSClient(addr string) *WSClient {
 	}
 }
 
-func (c *WSClient) Connect() error {
+func (c *WSClient) Connect(urlPath string) error {
 	c.connected = false
 	conn, err := net.Dial("tcp", "127.0.0.1:9001")
 
@@ -34,7 +34,7 @@ func (c *WSClient) Connect() error {
 		return err
 	}
 	c.conn = conn
-	req, err := http.NewRequest("GET", "http://"+c.addr+"/getCaseCount", nil)
+	req, err := http.NewRequest("GET", "http://"+c.addr+urlPath, nil)
 	if err != nil {
 		return err
 	}
