@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"crypto/rand"
 	"errors"
 	"fmt"
 	"io"
@@ -99,13 +98,11 @@ func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
 }
 
 func SendCloseMessage(conn net.Conn) {
-	frame := NewWSFrame()
+	frame := NewWSFrame(true)
 	frame.final = true
 	frame.opcode = Close
 	frame.length = 0
-	frame.masked = true
 
-	rand.Read(frame.mask[:])
 	b := make([]byte, 4)
 	frame.Write(conn, b)
 }

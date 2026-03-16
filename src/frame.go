@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"crypto/rand"
 	"encoding/binary"
 	"io"
 	"net"
@@ -27,8 +28,15 @@ type WSFrame struct {
 	mask   [4]byte
 }
 
-func NewWSFrame() *WSFrame {
-	return &WSFrame{}
+func NewWSFrame(masked bool) *WSFrame {
+	var mask [4]byte
+	if masked {
+		rand.Read(mask[:])
+	}
+	return &WSFrame{
+		masked: masked,
+		mask:   mask,
+	}
 }
 
 func (f *WSFrame) Write(conn net.Conn, content []byte) error {
