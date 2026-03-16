@@ -20,8 +20,8 @@ func main() {
 	}
 	fmt.Println("test count: ", n)
 
-	// RunTest(conn, 5, agentName)
-	// RunTest(conn, 6, agentName)
+	RunTest(conn, 17, agentName)
+	RunTest(conn, 18, agentName)
 
 	for i := 1; i <= n; i++ {
 		RunTest(conn, i, agentName)

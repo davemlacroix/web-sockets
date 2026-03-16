@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"io"
 	"net"
 	"net/http"
 )
@@ -74,7 +75,13 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 
 	if message.Type() == Close {
 		c.connected = false
-		SendMessage(c.conn, Close, []byte("OK"))
+
+		body, err := io.ReadAll(message)
+		if err != nil {
+			return nil, err
+		}
+		SendMessage(c.conn, Close, body)
+		c.connected = false
 		c.conn.Close()
 		return message, nil
 	}
@@ -85,7 +92,9 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 func (c *WSClient) Close() error {
 	SendMessage(c.conn, Close, []byte("OK"))
 	//need to wait for a close frame response
+	//and still process all remaining messages?
+
 	c.connected = false
-	defer c.conn.Close()
+	c.conn.Close()
 	return nil
 }
