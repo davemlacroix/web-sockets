@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -94,8 +93,6 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 			return nil, err
 		}
 
-		fmt.Println("size of ping...")
-		fmt.Println(len(body))
 		if len(body) > 125 {
 			errCode := make([]byte, 2)
 			binary.BigEndian.PutUint16(errCode, uint16(1002))
@@ -104,6 +101,18 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 			c.conn.Close()
 		}
 		SendMessage(c.conn, Pong, body)
+		message, err = c.NextMessage()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if message.Type() == Pong {
+		_, err := io.ReadAll(message)
+		if err != nil {
+			return nil, err
+		}
+
 		message, err = c.NextMessage()
 		if err != nil {
 			return nil, err
