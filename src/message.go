@@ -38,17 +38,12 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 			if m.frame.final {
 				return n, io.EOF
 			}
-			if err = m.client.NextMessageFrame(m); err != nil {
-				return n, err
-			}
-			// fmt.Println("Read - opcode", m.frame.opcode)
-			// fmt.Println("Read - body length", m.frame.length)
 			for {
-				err = m.client.NextMessageFrame(m)
-				if err != nil {
+				if err = m.client.NextMessageFrame(m); err != nil {
 					return n, err
 				}
-
+				// fmt.Println("Read - opcode", m.frame.opcode)
+				// fmt.Println("Read - body length", m.frame.length)
 				if m.frame.opcode != Ping && m.frame.opcode != Pong {
 					break
 				}
