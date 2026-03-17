@@ -41,6 +41,19 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 			if err = m.client.NextMessageFrame(m); err != nil {
 				return n, err
 			}
+			// fmt.Println("Read - opcode", m.frame.opcode)
+			// fmt.Println("Read - body length", m.frame.length)
+			for {
+				err = m.client.NextMessageFrame(m)
+				if err != nil {
+					return n, err
+				}
+
+				if m.frame.opcode != Ping && m.frame.opcode != Pong {
+					break
+				}
+			}
+
 			if m.frame.opcode != Continuation {
 				return n, errors.New("expected continuation frame")
 			}

@@ -94,6 +94,8 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	if err != nil {
 		return err
 	}
+	// fmt.Println("NextMessageFrame - opcode", frame.opcode)
+	// fmt.Println("NextMessageFrame - body length", frame.length)
 	message.frame = frame
 
 	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {
