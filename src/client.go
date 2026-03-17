@@ -15,7 +15,7 @@ type WSClient struct {
 	connected     bool
 	addr          string
 	conn          net.Conn
-	reader        *bufio.Reader
+	connReader    *bufio.Reader
 	messageReady  bool
 	message       []byte
 	messageReader *bufio.Reader
@@ -61,8 +61,8 @@ func (c *WSClient) Connect(urlPath string) error {
 		return err
 	}
 
-	c.reader = bufio.NewReader(c.conn)
-	resp, err := http.ReadResponse(c.reader, req)
+	c.connReader = bufio.NewReader(c.conn)
+	resp, err := http.ReadResponse(c.connReader, req)
 	if err != nil {
 		return err
 	}

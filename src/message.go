@@ -124,7 +124,7 @@ func (m *WSMessage) ReadText() (string, error) {
 func NewWSMessage(client *WSClient) *WSMessage {
 	return &WSMessage{
 		client: client,
-		reader: client.reader,
+		reader: client.connReader,
 	}
 }
 
