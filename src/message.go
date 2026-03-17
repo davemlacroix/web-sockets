@@ -33,9 +33,15 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 		if err != nil && err != io.EOF {
 			return n, err
 		}
-		if !utf8.Valid(p[:frameN]) {
-			m.client.CloseWithError()
-			return n, errors.New("invalid utf8")
+
+		if m.frame.opcode == Text ||
+			m.frame.opcode == Close ||
+			m.frame.opcode == Continuation && m.opcode == Text {
+
+			if !utf8.Valid(p[:frameN]) {
+				m.client.CloseWithError()
+				return n, errors.New("invalid utf8")
+			}
 		}
 
 		p = p[frameN:]
