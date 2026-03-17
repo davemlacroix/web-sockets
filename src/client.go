@@ -121,6 +121,7 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 		if err != nil {
 			return err
 		}
+
 		SendMessage(c.conn, Close, body)
 		c.connected = false
 		c.conn.Close()
