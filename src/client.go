@@ -69,31 +69,30 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 		return nil, errors.New("connection is not open")
 	}
 
-	var message *WSMessage
+	message := NewWSMessage(c)
 	var err error
 	for {
-		message, err = c.NextMessageFrame()
+		err = c.NextMessageFrame(message)
 		if err != nil {
 			return nil, err
 		}
 
-		if message.Type() != Ping && message.Type() != Pong {
+		if message.frame.opcode != Ping && message.frame.opcode != Pong {
 			break
 		}
-
 	}
+	message.opcode = message.frame.opcode
 	return message, err
 }
 
-func (c *WSClient) NextMessageFrame() (*WSMessage, error) {
+func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	if c.connected == false {
-		return nil, errors.New("connection is not open")
+		return errors.New("connection is not open")
 	}
 
-	message := NewWSMessage(c)
 	frame, err := message.NextWSFrame()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	message.frame = frame
 
@@ -101,26 +100,26 @@ func (c *WSClient) NextMessageFrame() (*WSMessage, error) {
 		errCode := make([]byte, 2)
 		binary.BigEndian.PutUint16(errCode, uint16(1002))
 		SendMessage(c.conn, Close, errCode)
-		return nil, errors.New("rsv fields must not be in use")
+		return errors.New("rsv fields must not be in use")
 	}
 
-	if message.Type() == Close {
+	if message.frame.opcode == Close {
 		c.connected = false
 
 		body, err := io.ReadAll(message)
 		if err != nil {
-			return nil, err
+			return err
 		}
 		SendMessage(c.conn, Close, body)
 		c.connected = false
 		c.conn.Close()
-		return message, nil
+		return nil
 	}
 
-	if message.Type() == Ping {
+	if message.frame.opcode == Ping {
 		body, err := io.ReadAll(message)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if len(body) > 125 {
@@ -133,14 +132,14 @@ func (c *WSClient) NextMessageFrame() (*WSMessage, error) {
 		SendMessage(c.conn, Pong, body)
 	}
 
-	if message.Type() == Pong {
+	if message.frame.opcode == Pong {
 		_, err := io.ReadAll(message)
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return message, nil
+	return nil
 }
 
 func (c *WSClient) Close() error {

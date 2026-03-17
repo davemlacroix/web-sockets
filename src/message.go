@@ -17,38 +17,43 @@ type WSMessage struct {
 	client *WSClient
 	reader *bufio.Reader
 	frame  *WSFrame
+	opcode Opcode
 }
 
 func (m *WSMessage) Type() Opcode {
-	return m.frame.opcode
+	return m.opcode
 }
 
-// func (m *WSMessage) Read(p []byte) (n int, err error) {
-// 	// this will need to be changed to work for multiple frames
-// 	// in a single message
-// 	n = 0
-// 	for {
-// 		fmt.Println("frame read ------")
-// 		frameN, err := m.ReadFrame(p)
-// 		n += frameN
-// 		fmt.Println(n)
-// 		if err != nil {
-// 			fmt.Println("frame read error ------")
-// 			fmt.Println(err)
-// 			return n, err
-// 		}
-
-// 		if m.frame.final {
-// 			break
-// 		}
-
-// 		m.frame, err = ReadWSFrame(m.reader)
-// 	}
-
-// 	return n, err
-// }
-
 func (m *WSMessage) Read(p []byte) (n int, err error) {
+	for len(p) > 0 {
+		frameN, err := ReadFrame(m, p, len(p))
+		n += frameN
+		p = p[frameN:]
+
+		if err != nil && err != io.EOF {
+			return n, err
+		}
+
+		if err == io.EOF {
+			if m.frame.final {
+				return n, io.EOF
+			}
+			if err = m.client.NextMessageFrame(m); err != nil {
+				return n, err
+			}
+			if m.frame.opcode != Continuation {
+				return n, errors.New("expected continuation frame")
+			}
+			continue
+		}
+
+		return n, nil
+	}
+
+	return n, nil
+}
+
+func ReadFrame(m *WSMessage, p []byte, readLen int) (n int, err error) {
 	if m.frame == nil {
 		return 0, errors.New("no frame available")
 	}
@@ -57,7 +62,6 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 		return 0, io.EOF
 	}
 
-	readLen := len(p)
 	if uint64(readLen) > m.frame.payloadRemaining {
 		readLen = int(m.frame.payloadRemaining)
 	}
