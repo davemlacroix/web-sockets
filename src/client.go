@@ -97,9 +97,7 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	message.frame = frame
 
 	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {
-		errCode := make([]byte, 2)
-		binary.BigEndian.PutUint16(errCode, uint16(1002))
-		SendMessage(c.conn, Close, errCode)
+		c.CloseWithError()
 		return errors.New("rsv fields must not be in use")
 	}
 
@@ -117,17 +115,17 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	}
 
 	if message.frame.opcode == Ping {
+		if !message.frame.final {
+			c.CloseWithError()
+		}
+
 		body, err := io.ReadAll(message)
 		if err != nil {
 			return err
 		}
 
 		if len(body) > 125 {
-			errCode := make([]byte, 2)
-			binary.BigEndian.PutUint16(errCode, uint16(1002))
-			SendMessage(c.conn, Close, errCode)
-			c.connected = false
-			c.conn.Close()
+			c.CloseWithError()
 		}
 		SendMessage(c.conn, Pong, body)
 	}
@@ -151,4 +149,12 @@ func (c *WSClient) Close() error {
 	c.connected = false
 	c.conn.Close()
 	return nil
+}
+
+func (c *WSClient) CloseWithError() {
+	errCode := make([]byte, 2)
+	binary.BigEndian.PutUint16(errCode, uint16(1002))
+	SendMessage(c.conn, Close, errCode)
+	c.connected = false
+	c.conn.Close()
 }
