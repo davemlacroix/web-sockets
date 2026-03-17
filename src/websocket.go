@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -44,31 +43,17 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 	}
 
 	for {
-		message, err := conn.NextMessage()
-		if err != nil {
+		mType, err := conn.NextMessage()
+		if err != nil && err != io.EOF {
 			fmt.Println("error with test " + strconv.Itoa(n) + ": " + err.Error())
 			break
 		}
-
-		if message.Type() == Close {
+		if err == io.EOF {
 			break
 		}
 
-		if message.Type() == Text || message.Type() == Binary {
-			body, err := io.ReadAll(message)
-			// fmt.Println(string(body))
-
-			if err != nil && err != io.EOF {
-				fmt.Println("error with test " + strconv.Itoa(n) + ": " + err.Error())
-				break
-			}
-
-			SendMessage(conn.conn, message.Type(), body)
-
-			if err == io.EOF {
-				break
-			}
-		}
+		body, err := io.ReadAll(conn)
+		SendMessage(conn.conn, mType, body)
 	}
 
 	return nil
@@ -82,32 +67,21 @@ func GetTestCount(conn *WSClient) (int, error) {
 		log.Fatal(err)
 	}
 
-	message, err := conn.NextMessage()
+	mType, err := conn.NextMessage()
 	if err != nil {
 		return 0, err
 	}
 
-	if message.Type() != Text {
+	body, err := io.ReadAll(conn)
+	if mType != Text {
 		return 0, err
 	}
 
-	countText, err := message.ReadText()
-	if err != nil {
-		return 0, err
-	}
-
+	countText := string(body)
+	fmt.Println(countText)
 	count, err := strconv.Atoi(countText)
 	if err != nil {
 		return 0, err
-	}
-
-	message, err = conn.NextMessage()
-	if err != nil {
-		return 0, err
-	}
-
-	if message.Type() != Close {
-		return 0, errors.New("expected close message opcode")
 	}
 
 	return count, nil

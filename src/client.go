@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/binary"
 	"errors"
 	"io"
@@ -10,16 +11,20 @@ import (
 )
 
 type WSClient struct {
-	connected bool
-	addr      string
-	conn      net.Conn
-	reader    *bufio.Reader
+	connected     bool
+	addr          string
+	conn          net.Conn
+	reader        *bufio.Reader
+	messageReady  bool
+	message       []byte
+	messageReader *bufio.Reader
 }
 
 type Client interface {
 	Connect(urlPath string) error
-	NextMessage() (*Message, error)
 	Close()
+	NextMessage() (Opcode, error)
+	Read(p []byte) (n int, err error)
 }
 
 func NewWSClient(addr string) *WSClient {
@@ -64,9 +69,22 @@ func (c *WSClient) Connect(urlPath string) error {
 	return nil
 }
 
-func (c *WSClient) NextMessage() (*WSMessage, error) {
+func (c *WSClient) Read(p []byte) (n int, err error) {
+
+	if !c.messageReady {
+		return 0, errors.New("no message ready")
+	}
+
+	n, err = c.messageReader.Read(p)
+	if err == io.EOF {
+		c.messageReady = false
+	}
+	return n, err
+}
+
+func (c *WSClient) NextMessage() (Opcode, error) {
 	if c.connected == false {
-		return nil, errors.New("connection is not open")
+		return 0, errors.New("connection is not open")
 	}
 
 	message := NewWSMessage(c)
@@ -74,7 +92,7 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 	for {
 		err = c.NextMessageFrame(message)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
 
 		if message.frame.opcode != Ping && message.frame.opcode != Pong {
@@ -82,7 +100,21 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 		}
 	}
 	message.opcode = message.frame.opcode
-	return message, err
+
+	if message.Type() == Text || message.Type() == Binary {
+		body, err := io.ReadAll(message)
+		c.message = body
+		c.messageReader = bufio.NewReader(bytes.NewReader(body))
+
+		if err != nil && err != io.EOF {
+			return 0, err
+		}
+		c.messageReady = true
+	} else {
+		return 0, io.EOF
+	}
+
+	return message.Type(), nil
 }
 
 func (c *WSClient) NextMessageFrame(message *WSMessage) error {
@@ -178,8 +210,6 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 func (c *WSClient) Close() error {
 
 	SendMessage(c.conn, Close, []byte("OK"))
-	//need to wait for a close frame response
-	//and still process all remaining messages?
 
 	c.connected = false
 	c.conn.Close()
