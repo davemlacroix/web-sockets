@@ -69,17 +69,39 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 		return nil, errors.New("connection is not open")
 	}
 
-	message, err := NextWSMessage(c.reader)
+	var message *WSMessage
+	var err error
+	for {
+		message, err = c.NextMessageFrame()
+		if err != nil {
+			return nil, err
+		}
 
+		if message.Type() != Ping && message.Type() != Pong {
+			break
+		}
+
+	}
+	return message, err
+}
+
+func (c *WSClient) NextMessageFrame() (*WSMessage, error) {
+	if c.connected == false {
+		return nil, errors.New("connection is not open")
+	}
+
+	message := NewWSMessage(c)
+	frame, err := message.NextWSFrame()
 	if err != nil {
 		return nil, err
 	}
+	message.frame = frame
 
 	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {
 		errCode := make([]byte, 2)
 		binary.BigEndian.PutUint16(errCode, uint16(1002))
 		SendMessage(c.conn, Close, errCode)
-		return nil, errors.New("rsv fields should not be in use")
+		return nil, errors.New("rsv fields must not be in use")
 	}
 
 	if message.Type() == Close {
@@ -109,19 +131,10 @@ func (c *WSClient) NextMessage() (*WSMessage, error) {
 			c.conn.Close()
 		}
 		SendMessage(c.conn, Pong, body)
-		message, err = c.NextMessage()
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	if message.Type() == Pong {
 		_, err := io.ReadAll(message)
-		if err != nil {
-			return nil, err
-		}
-
-		message, err = c.NextMessage()
 		if err != nil {
 			return nil, err
 		}

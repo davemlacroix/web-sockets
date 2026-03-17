@@ -14,6 +14,7 @@ type Message interface {
 }
 
 type WSMessage struct {
+	client *WSClient
 	reader *bufio.Reader
 	frame  *WSFrame
 }
@@ -99,24 +100,19 @@ func (m *WSMessage) ReadText() (string, error) {
 	return text, nil
 }
 
-func NextWSMessage(reader *bufio.Reader) (*WSMessage, error) {
-	frame, err := ReadWSFrame(reader)
+func NewWSMessage(client *WSClient) *WSMessage {
+	return &WSMessage{
+		client: client,
+		reader: client.reader,
+	}
+}
 
+func (client *WSMessage) NextWSFrame() (*WSFrame, error) {
+	frame, err := ReadWSFrame(client.reader)
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Println("Frame Header ---------------------")
-	// fmt.Println("final: ", frame.final)
-	// fmt.Println("opcode: ", frame.opcode)
-	// fmt.Println("masked: ", frame.masked)
-	// fmt.Println("length: ", frame.length)
-	// fmt.Println("End Frame Header -----------------")
-
-	m := &WSMessage{
-		reader: reader,
-		frame:  frame,
-	}
-	return m, nil
+	return frame, err
 }
 
 func SendMessage(conn net.Conn, opcode Opcode, body []byte) {
