@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"unicode/utf8"
 )
 
 type WSClient struct {
@@ -103,6 +104,13 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 
 	if message.Type() == Text || message.Type() == Binary {
 		body, err := io.ReadAll(message)
+
+		if message.Type() == Text {
+			if !utf8.Valid(body) {
+				c.CloseWithError()
+				return 0, err
+			}
+		}
 		c.message = body
 		c.messageReader = bufio.NewReader(bytes.NewReader(body))
 
