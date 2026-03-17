@@ -71,6 +71,15 @@ func (c *WSClient) Connect(urlPath string) error {
 	return nil
 }
 
+func (c *WSClient) Close() error {
+
+	WriteMessage(c.conn, Close, []byte("OK"))
+
+	c.connected = false
+	c.conn.Close()
+	return nil
+}
+
 func (c *WSClient) Read(p []byte) (n int, err error) {
 
 	if !c.messageReady {
@@ -129,6 +138,14 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 	}
 
 	return message.Type(), nil
+}
+
+func (c *WSClient) CloseWithError() {
+	errCode := make([]byte, 2)
+	binary.BigEndian.PutUint16(errCode, uint16(1002))
+	WriteMessage(c.conn, Close, errCode)
+	c.connected = false
+	c.conn.Close()
 }
 
 func (c *WSClient) NextMessageFrame(message *WSMessage) error {
@@ -219,21 +236,4 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	}
 
 	return nil
-}
-
-func (c *WSClient) Close() error {
-
-	WriteMessage(c.conn, Close, []byte("OK"))
-
-	c.connected = false
-	c.conn.Close()
-	return nil
-}
-
-func (c *WSClient) CloseWithError() {
-	errCode := make([]byte, 2)
-	binary.BigEndian.PutUint16(errCode, uint16(1002))
-	WriteMessage(c.conn, Close, errCode)
-	c.connected = false
-	c.conn.Close()
 }
