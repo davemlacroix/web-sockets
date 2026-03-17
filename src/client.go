@@ -122,6 +122,27 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 			return err
 		}
 
+		if len(body) == 1 {
+			c.CloseWithError()
+			return nil
+		}
+
+		if len(body) >= 2 {
+			code := binary.BigEndian.Uint16(body[:2])
+			invalid := false
+			switch {
+			case code == 1000, code == 1001, code == 1002, code == 1003,
+				code == 1007, code == 1008, code == 1009, code == 1010, code == 1011:
+			case code >= 3000 && code <= 4999:
+			default:
+				invalid = true
+			}
+			if invalid {
+				c.CloseWithError()
+				return nil
+			}
+		}
+
 		SendMessage(c.conn, Close, body)
 		c.connected = false
 		c.conn.Close()
