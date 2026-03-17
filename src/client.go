@@ -103,6 +103,17 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 		return errors.New("rsv fields must not be in use")
 	}
 
+	switch message.frame.opcode {
+	case Continuation:
+	case Text:
+	case Binary:
+	case Close:
+	case Ping:
+	case Pong:
+	default:
+		c.CloseWithError()
+	}
+
 	if message.frame.opcode == Close {
 		c.connected = false
 
