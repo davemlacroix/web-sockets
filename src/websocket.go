@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"strconv"
+	"unicode/utf8"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 	}
 	fmt.Println("test count: ", n)
 
-	// RunTest(conn, 45, agentName)
+	// RunTest(conn, 47, agentName)
 	// RunTest(conn, 50, agentName)
 
 	for i := 1; i <= n; i++ {
@@ -56,10 +57,15 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 
 		if message.Type() == Text || message.Type() == Binary {
 			body, err := io.ReadAll(message)
-			// fmt.Println(message.Type())
+			// fmt.Println(string(body))
 
 			if err != nil && err != io.EOF {
 				fmt.Println("error with test " + strconv.Itoa(n) + ": " + err.Error())
+				break
+			}
+
+			if message.Type() == Text && !utf8.Valid(body) {
+				conn.CloseWithError()
 				break
 			}
 

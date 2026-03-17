@@ -28,11 +28,12 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		frameN, err := ReadFrame(m, p, len(p))
 		n += frameN
-		p = p[frameN:]
 
 		if err != nil && err != io.EOF {
 			return n, err
 		}
+
+		p = p[frameN:]
 
 		if err == io.EOF {
 			if m.frame.final {
