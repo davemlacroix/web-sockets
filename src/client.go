@@ -26,6 +26,7 @@ type Client interface {
 	Close()
 	NextMessage() (Opcode, error)
 	Read(p []byte) (n int, err error)
+	Write(opcode Opcode, body []byte) error
 }
 
 func NewWSClient(addr string) *WSClient {
@@ -83,9 +84,14 @@ func (c *WSClient) Read(p []byte) (n int, err error) {
 	return n, err
 }
 
+func (c *WSClient) Write(opcode Opcode, body []byte) error {
+	err := WriteMessage(c.conn, opcode, body)
+	return err
+}
+
 func (c *WSClient) NextMessage() (Opcode, error) {
 	if c.connected == false {
-		return 0, errors.New("connection is not open")
+		return 0, io.EOF
 	}
 
 	message := NewWSMessage(c)
@@ -127,7 +133,7 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 
 func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	if c.connected == false {
-		return errors.New("connection is not open")
+		return io.EOF
 	}
 
 	frame, err := message.NextWSFrame()
@@ -183,7 +189,7 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 			}
 		}
 
-		SendMessage(c.conn, Close, body)
+		WriteMessage(c.conn, Close, body)
 		c.connected = false
 		c.conn.Close()
 		return nil
@@ -202,7 +208,7 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 		if len(body) > 125 {
 			c.CloseWithError()
 		}
-		SendMessage(c.conn, Pong, body)
+		WriteMessage(c.conn, Pong, body)
 	}
 
 	if message.frame.opcode == Pong {
@@ -217,7 +223,7 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 
 func (c *WSClient) Close() error {
 
-	SendMessage(c.conn, Close, []byte("OK"))
+	WriteMessage(c.conn, Close, []byte("OK"))
 
 	c.connected = false
 	c.conn.Close()
@@ -227,7 +233,7 @@ func (c *WSClient) Close() error {
 func (c *WSClient) CloseWithError() {
 	errCode := make([]byte, 2)
 	binary.BigEndian.PutUint16(errCode, uint16(1002))
-	SendMessage(c.conn, Close, errCode)
+	WriteMessage(c.conn, Close, errCode)
 	c.connected = false
 	c.conn.Close()
 }

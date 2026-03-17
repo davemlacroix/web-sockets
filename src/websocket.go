@@ -53,7 +53,7 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 		}
 
 		body, err := io.ReadAll(conn)
-		SendMessage(conn.conn, mType, body)
+		conn.Write(mType, body)
 	}
 
 	return nil

@@ -136,11 +136,12 @@ func (client *WSMessage) NextWSFrame() (*WSFrame, error) {
 	return frame, err
 }
 
-func SendMessage(conn net.Conn, opcode Opcode, body []byte) {
+func WriteMessage(conn net.Conn, opcode Opcode, body []byte) error {
 	frame := NewWSFrame(true)
 	frame.final = true
 	frame.opcode = opcode
 	frame.length = uint64(len(body))
 
-	frame.Write(conn, body)
+	err := frame.Write(conn, body)
+	return err
 }
