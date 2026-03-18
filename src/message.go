@@ -40,7 +40,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 
 		if m.frame.opcode == Close {
 			if frameN >= 2 && !utf8.Valid(p[2:frameN]) {
-				m.client.CloseWithError()
+				m.client.CloseWithError(1007)
 				return n, errors.New("invalid utf8")
 			}
 		}
@@ -64,7 +64,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 			}
 
 			if m.frame.opcode != Continuation {
-				m.client.CloseWithError()
+				m.client.CloseWithError(1002)
 				return n, errors.New("expected continuation frame")
 			}
 			continue
@@ -108,7 +108,7 @@ func NextMessageFrame(message *WSMessage) error {
 	message.frame = frame
 
 	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {
-		message.client.CloseWithError()
+		message.client.CloseWithError(1002)
 		return errors.New("rsv fields must not be in use")
 	}
 
@@ -120,12 +120,12 @@ func NextMessageFrame(message *WSMessage) error {
 	case Ping:
 	case Pong:
 	default:
-		message.client.CloseWithError()
+		message.client.CloseWithError(1002)
 	}
 
 	if message.frame.opcode == Close {
 		if !message.frame.final {
-			message.client.CloseWithError()
+			message.client.CloseWithError(1002)
 		}
 
 		body, err := io.ReadAll(message)
@@ -134,7 +134,7 @@ func NextMessageFrame(message *WSMessage) error {
 		}
 
 		if len(body) == 1 {
-			message.client.CloseWithError()
+			message.client.CloseWithError(1002)
 			return nil
 		}
 
@@ -149,7 +149,7 @@ func NextMessageFrame(message *WSMessage) error {
 				invalid = true
 			}
 			if invalid {
-				message.client.CloseWithError()
+				message.client.CloseWithError(1002)
 				return nil
 			}
 		}
@@ -162,7 +162,7 @@ func NextMessageFrame(message *WSMessage) error {
 
 	if message.frame.opcode == Ping {
 		if !message.frame.final {
-			message.client.CloseWithError()
+			message.client.CloseWithError(1002)
 		}
 
 		body, err := io.ReadAll(message)
@@ -171,14 +171,14 @@ func NextMessageFrame(message *WSMessage) error {
 		}
 
 		if len(body) > 125 {
-			message.client.CloseWithError()
+			message.client.CloseWithError(1002)
 		}
 		WriteMessage(message.client.conn, Pong, body)
 	}
 
 	if message.frame.opcode == Pong {
 		if !message.frame.final {
-			message.client.CloseWithError()
+			message.client.CloseWithError(1002)
 		}
 
 		_, err := io.ReadAll(message)

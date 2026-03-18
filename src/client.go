@@ -106,7 +106,7 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 	}
 
 	if message.Type() == Continuation {
-		c.CloseWithError()
+		c.CloseWithError(1002)
 		return 0, io.EOF
 	}
 
@@ -115,7 +115,7 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 
 		if message.Type() == Text {
 			if !utf8.Valid(body) {
-				c.CloseWithError()
+				c.CloseWithError(1007)
 				return 0, err
 			}
 		}
@@ -133,9 +133,9 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 	return message.Type(), nil
 }
 
-func (c *WSClient) CloseWithError() {
+func (c *WSClient) CloseWithError(code uint16) {
 	errCode := make([]byte, 2)
-	binary.BigEndian.PutUint16(errCode, uint16(1002))
+	binary.BigEndian.PutUint16(errCode, code)
 	WriteMessage(c.conn, Close, errCode)
 	c.connected = false
 	c.conn.Close()
