@@ -56,8 +56,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 				if err != nil {
 					return n, err
 				}
-				// fmt.Println("Read - opcode", m.frame.opcode)
-				// fmt.Println("Read - body length", m.frame.length)
+
 				if m.frame.opcode != Ping && m.frame.opcode != Pong {
 					break
 				}
@@ -103,8 +102,6 @@ func NextMessageFrame(message *WSMessage) error {
 		return err
 	}
 
-	// fmt.Println("NextMessageFrame - opcode", frame.opcode)
-	// fmt.Println("NextMessageFrame - body length", frame.length)
 	message.frame = frame
 
 	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {

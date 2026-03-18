@@ -19,9 +19,6 @@ func main() {
 	}
 	fmt.Println("test count: ", n)
 
-	// RunTest(conn, 47, agentName)
-	// RunTest(conn, 50, agentName)
-
 	for i := 1; i <= n; i++ {
 		RunTest(client, i, agentName)
 	}

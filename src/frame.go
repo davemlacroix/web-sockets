@@ -93,9 +93,6 @@ func (f *WSFrame) Write(conn net.Conn, body []byte) error {
 		frame = append(frame, body[:f.length]...)
 	}
 
-	// fmt.Println("frame opcode", f.opcode)
-	// fmt.Println("frame body length", f.length)
-
 	_, err := conn.Write(frame)
 	return err
 }
