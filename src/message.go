@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"io"
 	"net"
@@ -16,7 +15,6 @@ type Message interface {
 
 type WSMessage struct {
 	client *WSClient
-	reader *bufio.Reader
 	frame  *WSFrame
 	opcode Opcode
 }
@@ -83,7 +81,7 @@ func ReadFrame(m *WSMessage, p []byte, readLen int) (n int, err error) {
 		readLen = int(m.frame.payloadRemaining)
 	}
 
-	n, err = io.ReadFull(m.reader, p[:readLen])
+	n, err = io.ReadFull(m.client.connReader, p[:readLen])
 	if err != nil {
 		return n, err
 	}
@@ -124,12 +122,11 @@ func (m *WSMessage) ReadText() (string, error) {
 func NewWSMessage(client *WSClient) *WSMessage {
 	return &WSMessage{
 		client: client,
-		reader: client.connReader,
 	}
 }
 
-func (client *WSMessage) NextWSFrame() (*WSFrame, error) {
-	frame, err := ReadWSFrame(client.reader)
+func (m *WSMessage) NextWSFrame() (*WSFrame, error) {
+	frame, err := ReadWSFrame(m.client.connReader)
 	if err != nil {
 		return nil, err
 	}
