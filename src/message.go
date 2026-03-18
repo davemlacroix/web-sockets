@@ -31,7 +31,7 @@ func (m *WSMessage) Type() Opcode {
 
 func (m *WSMessage) Read(p []byte) (n int, err error) {
 	for len(p) > 0 {
-		frameN, err := ReadFrame(m, p, len(p))
+		frameN, err := ReadFrame(m.frame, m.client.connReader, p, len(p))
 		n += frameN
 
 		if err != nil && err != io.EOF {
@@ -52,7 +52,8 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 				return n, io.EOF
 			}
 			for {
-				if err = NextMessageFrame(m); err != nil {
+				err = NextMessageFrame(m)
+				if err != nil {
 					return n, err
 				}
 				// fmt.Println("Read - opcode", m.frame.opcode)
@@ -193,30 +194,4 @@ func WriteMessage(conn net.Conn, opcode Opcode, body []byte) error {
 
 	err := frame.Write(conn, body)
 	return err
-}
-
-func ReadFrame(m *WSMessage, p []byte, readLen int) (n int, err error) {
-	if m.frame == nil {
-		return 0, errors.New("no frame available")
-	}
-
-	if m.frame.payloadRemaining == 0 {
-		return 0, io.EOF
-	}
-
-	if uint64(readLen) > m.frame.payloadRemaining {
-		readLen = int(m.frame.payloadRemaining)
-	}
-
-	n, err = io.ReadFull(m.client.connReader, p[:readLen])
-	if err != nil {
-		return n, err
-	}
-
-	m.frame.payloadRemaining -= uint64(n)
-	if m.frame.payloadRemaining == 0 {
-		return n, io.EOF
-	}
-
-	return n, nil
 }

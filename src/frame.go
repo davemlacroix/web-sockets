@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/rand"
 	"encoding/binary"
+	"errors"
 	"io"
 	"net"
 )
@@ -144,4 +145,30 @@ func ReadWSFrame(reader *bufio.Reader) (*WSFrame, error) {
 	}
 
 	return f, nil
+}
+
+func ReadFrame(frame *WSFrame, connReader *bufio.Reader, p []byte, readLen int) (n int, err error) {
+	if frame == nil {
+		return 0, errors.New("no frame available")
+	}
+
+	if frame.payloadRemaining == 0 {
+		return 0, io.EOF
+	}
+
+	if uint64(readLen) > frame.payloadRemaining {
+		readLen = int(frame.payloadRemaining)
+	}
+
+	n, err = io.ReadFull(connReader, p[:readLen])
+	if err != nil {
+		return n, err
+	}
+
+	frame.payloadRemaining -= uint64(n)
+	if frame.payloadRemaining == 0 {
+		return n, io.EOF
+	}
+
+	return n, nil
 }
