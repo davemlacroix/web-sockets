@@ -101,19 +101,10 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 		return 0, io.EOF
 	}
 
-	message := NewWSMessage(c)
-	var err error
-	for {
-		err = c.NextMessageFrame(message)
-		if err != nil {
-			return 0, err
-		}
-
-		if message.frame.opcode != Ping && message.frame.opcode != Pong {
-			break
-		}
+	message, err := NextWSMessage(c)
+	if err != nil {
+		return 0, err
 	}
-	message.opcode = message.frame.opcode
 
 	if message.Type() == Text || message.Type() == Binary {
 		body, err := io.ReadAll(message)
@@ -144,108 +135,4 @@ func (c *WSClient) CloseWithError() {
 	WriteMessage(c.conn, Close, errCode)
 	c.connected = false
 	c.conn.Close()
-}
-
-func (c *WSClient) NextMessageFrame(message *WSMessage) error {
-	if c.connected == false {
-		return io.EOF
-	}
-
-	frame, err := ReadWSFrame(c.connReader)
-	if err != nil {
-		return err
-	}
-
-	if err != nil {
-		return err
-	}
-	// fmt.Println("NextMessageFrame - opcode", frame.opcode)
-	// fmt.Println("NextMessageFrame - body length", frame.length)
-	message.frame = frame
-
-	if message.frame.rsv1 || message.frame.rsv2 || message.frame.rsv3 {
-		c.CloseWithError()
-		return errors.New("rsv fields must not be in use")
-	}
-
-	switch message.frame.opcode {
-	case Continuation:
-	case Text:
-	case Binary:
-	case Close:
-	case Ping:
-	case Pong:
-	default:
-		c.CloseWithError()
-	}
-
-	if message.frame.opcode == Close {
-		c.connected = false
-
-		body, err := io.ReadAll(message)
-		if err != nil {
-			return err
-		}
-
-		if len(body) == 1 {
-			c.CloseWithError()
-			return nil
-		}
-
-		if len(body) >= 2 {
-			code := binary.BigEndian.Uint16(body[:2])
-			invalid := false
-			switch {
-			case code == 1000, code == 1001, code == 1002, code == 1003,
-				code == 1007, code == 1008, code == 1009, code == 1010, code == 1011:
-			case code >= 3000 && code <= 4999:
-			default:
-				invalid = true
-			}
-			if invalid {
-				c.CloseWithError()
-				return nil
-			}
-		}
-
-		WriteMessage(c.conn, Close, body)
-		c.connected = false
-		c.conn.Close()
-		return nil
-	}
-
-	if message.frame.opcode == Ping {
-		if !message.frame.final {
-			c.CloseWithError()
-		}
-
-		body, err := io.ReadAll(message)
-		if err != nil {
-			return err
-		}
-
-		if len(body) > 125 {
-			c.CloseWithError()
-		}
-		WriteMessage(c.conn, Pong, body)
-	}
-
-	if message.frame.opcode == Pong {
-		_, err := io.ReadAll(message)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func WriteMessage(conn net.Conn, opcode Opcode, body []byte) error {
-	frame := NewWSFrame(true)
-	frame.final = true
-	frame.opcode = opcode
-	frame.length = uint64(len(body))
-
-	err := frame.Write(conn, body)
-	return err
 }
