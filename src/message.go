@@ -64,6 +64,7 @@ func (m *WSMessage) Read(p []byte) (n int, err error) {
 			}
 
 			if m.frame.opcode != Continuation {
+				m.client.CloseWithError()
 				return n, errors.New("expected continuation frame")
 			}
 			continue
