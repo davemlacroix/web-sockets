@@ -105,6 +105,11 @@ func (c *WSClient) NextMessage() (Opcode, error) {
 		return 0, err
 	}
 
+	if message.Type() == Continuation {
+		c.CloseWithError()
+		return 0, io.EOF
+	}
+
 	if message.Type() == Text || message.Type() == Binary {
 		body, err := io.ReadAll(message)
 
