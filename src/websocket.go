@@ -10,9 +10,9 @@ import (
 func main() {
 	fmt.Println("Starting websockets client...")
 	agentName := "MyWSClient"
-	conn := NewWSClient("127.0.0.1:9001")
+	client := NewWSClient("127.0.0.1:9001")
 
-	n, err := GetTestCount(conn)
+	n, err := GetTestCount(client)
 	if err != nil {
 		fmt.Println("error reading in number of tests")
 		log.Fatal(err)
@@ -23,27 +23,27 @@ func main() {
 	// RunTest(conn, 50, agentName)
 
 	for i := 1; i <= n; i++ {
-		RunTest(conn, i, agentName)
+		RunTest(client, i, agentName)
 	}
 
-	err2 := UpdateReports(conn, agentName)
+	err2 := UpdateReports(client, agentName)
 	if err2 != nil {
 		fmt.Println("error updating reports")
 		log.Fatal(err2)
 	}
 }
 
-func RunTest(conn *WSClient, n int, agentName string) error {
+func RunTest(client Client, n int, agentName string) error {
 	path := "/runCase?case=" + strconv.Itoa(n) + "&agent=" + agentName
-	err := conn.Connect(path)
-	defer conn.Close()
+	err := client.Connect(path)
+	defer client.Close()
 	if err != nil {
 		fmt.Println("error with initial connection")
 		log.Fatal(err)
 	}
 
 	for {
-		mType, err := conn.NextMessage()
+		mType, err := client.NextMessage()
 		if err != nil && err != io.EOF {
 			fmt.Println("error with test " + strconv.Itoa(n) + ": " + err.Error())
 			break
@@ -52,8 +52,8 @@ func RunTest(conn *WSClient, n int, agentName string) error {
 			break
 		}
 
-		body, err := io.ReadAll(conn)
-		conn.Write(mType, body)
+		body, err := io.ReadAll(client)
+		client.Write(mType, body)
 	}
 
 	return nil

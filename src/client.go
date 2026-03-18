@@ -71,12 +71,11 @@ func (c *WSClient) Connect(urlPath string) error {
 	return nil
 }
 
-func (c *WSClient) Close() error {
+func (c *WSClient) Close() {
 	WriteMessage(c.conn, Close, []byte("OK"))
 
 	c.connected = false
 	c.conn.Close()
-	return nil
 }
 
 func (c *WSClient) Read(p []byte) (n int, err error) {
