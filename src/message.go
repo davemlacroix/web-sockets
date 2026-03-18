@@ -102,9 +102,6 @@ func NextMessageFrame(message *WSMessage) error {
 		return err
 	}
 
-	if err != nil {
-		return err
-	}
 	// fmt.Println("NextMessageFrame - opcode", frame.opcode)
 	// fmt.Println("NextMessageFrame - body length", frame.length)
 	message.frame = frame
@@ -126,7 +123,9 @@ func NextMessageFrame(message *WSMessage) error {
 	}
 
 	if message.frame.opcode == Close {
-		message.client.connected = false
+		if !message.frame.final {
+			message.client.CloseWithError()
+		}
 
 		body, err := io.ReadAll(message)
 		if err != nil {
@@ -177,6 +176,10 @@ func NextMessageFrame(message *WSMessage) error {
 	}
 
 	if message.frame.opcode == Pong {
+		if !message.frame.final {
+			message.client.CloseWithError()
+		}
+
 		_, err := io.ReadAll(message)
 		if err != nil {
 			return err
