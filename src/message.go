@@ -94,31 +94,6 @@ func ReadFrame(m *WSMessage, p []byte, readLen int) (n int, err error) {
 	return n, nil
 }
 
-func (m *WSMessage) ReadText() (string, error) {
-	if m.frame.opcode != Text {
-		return "", errors.New("invalid frame type")
-	}
-
-	buf := make([]byte, 4096)
-	text := ""
-	for {
-		n, err := m.Read(buf)
-
-		if n > 0 {
-			text += string(buf[:n])
-		}
-
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return "", err
-		}
-	}
-
-	return text, nil
-}
-
 func NewWSMessage(client *WSClient) *WSMessage {
 	return &WSMessage{
 		client: client,
