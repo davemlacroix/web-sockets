@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"io"
-	"net"
 	"unicode/utf8"
 )
 
@@ -17,6 +16,12 @@ type WSMessage struct {
 	client *WSClient
 	frame  *WSFrame
 	opcode Opcode
+}
+
+func NewWSMessage(client *WSClient) *WSMessage {
+	return &WSMessage{
+		client: client,
+	}
 }
 
 func (m *WSMessage) Type() Opcode {
@@ -92,28 +97,4 @@ func ReadFrame(m *WSMessage, p []byte, readLen int) (n int, err error) {
 	}
 
 	return n, nil
-}
-
-func NewWSMessage(client *WSClient) *WSMessage {
-	return &WSMessage{
-		client: client,
-	}
-}
-
-func (m *WSMessage) NextWSFrame() (*WSFrame, error) {
-	frame, err := ReadWSFrame(m.client.connReader)
-	if err != nil {
-		return nil, err
-	}
-	return frame, err
-}
-
-func WriteMessage(conn net.Conn, opcode Opcode, body []byte) error {
-	frame := NewWSFrame(true)
-	frame.final = true
-	frame.opcode = opcode
-	frame.length = uint64(len(body))
-
-	err := frame.Write(conn, body)
-	return err
 }

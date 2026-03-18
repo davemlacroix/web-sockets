@@ -72,7 +72,6 @@ func (c *WSClient) Connect(urlPath string) error {
 }
 
 func (c *WSClient) Close() error {
-
 	WriteMessage(c.conn, Close, []byte("OK"))
 
 	c.connected = false
@@ -81,7 +80,6 @@ func (c *WSClient) Close() error {
 }
 
 func (c *WSClient) Read(p []byte) (n int, err error) {
-
 	if !c.messageReady {
 		return 0, errors.New("no message ready")
 	}
@@ -153,7 +151,11 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 		return io.EOF
 	}
 
-	frame, err := message.NextWSFrame()
+	frame, err := ReadWSFrame(c.connReader)
+	if err != nil {
+		return err
+	}
+
 	if err != nil {
 		return err
 	}
@@ -236,4 +238,14 @@ func (c *WSClient) NextMessageFrame(message *WSMessage) error {
 	}
 
 	return nil
+}
+
+func WriteMessage(conn net.Conn, opcode Opcode, body []byte) error {
+	frame := NewWSFrame(true)
+	frame.final = true
+	frame.opcode = opcode
+	frame.length = uint64(len(body))
+
+	err := frame.Write(conn, body)
+	return err
 }
