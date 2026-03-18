@@ -3,6 +3,9 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"crypto/rand"
+	"crypto/sha1"
+	"encoding/base64"
 	"encoding/binary"
 	"errors"
 	"io"
@@ -48,12 +51,16 @@ func (c *WSClient) Connect(urlPath string) error {
 		return err
 	}
 
+	keyBytes := make([]byte, 16)
+	if _, err := rand.Read(keyBytes); err != nil {
+		return err
+	}
+	key := base64.StdEncoding.EncodeToString(keyBytes)
+
 	req.Header.Add("Upgrade", "websocket")
 	req.Header.Add("Connection", "upgrade")
-	req.Header.Add("Upgrade", "websocket")
-	req.Header.Add("Sec-WebSocket-Key", "dGhlIHNhbXBsZSBub25jZQ==")
+	req.Header.Add("Sec-WebSocket-Key", key)
 	req.Header.Add("Origin", "127.0.0.1")
-	req.Header.Add("Sec-WebSocket-Protocol", "chat, superchat")
 	req.Header.Add("Sec-WebSocket-Version", "13")
 
 	err = req.Write(c.conn)
@@ -67,6 +74,16 @@ func (c *WSClient) Connect(urlPath string) error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	// Validate Sec-WebSocket-Accept per RFC 6455 4.1
+	const guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+	h := sha1.New()
+	h.Write([]byte(key + guid))
+	expectedAccept := base64.StdEncoding.EncodeToString(h.Sum(nil))
+	if resp.Header.Get("Sec-WebSocket-Accept") != expectedAccept {
+		return errors.New("invalid Sec-WebSocket-Accept header")
+	}
+
 	c.connected = true
 	return nil
 }
